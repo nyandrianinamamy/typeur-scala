@@ -9,6 +9,14 @@ case class App(term1: Term, term2: Term)
 case class Abs(arg: String, body: Term)
   extends Term
 
+object Var {
+  var last_var: Int = 1
+
+  def fresh_var(): Var =
+    Var.last_var = Var.last_var + 1
+    return Var("V" + Var.last_var)
+}
+
 def print_term(term: Term): Unit =
   def to_string(term: Term): String = term match
     case Var(name) => name
