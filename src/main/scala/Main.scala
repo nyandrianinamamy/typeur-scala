@@ -18,10 +18,7 @@ import scala.collection.mutable.Map
 def barendregt(l: Term): Term =
   def _barendregt(l: Term, remp: Map[String, Var]): Term = l match
     case Var(x) =>
-      if (!remp.contains(x))
-        var new_var = Var.fresh_var()
-        remp(x) = new_var
-      remp(x)
+      if (!remp.contains(x)) Var(x) else remp(x)
 
     case Abs(arg, body) =>
       if (!remp.contains(arg))

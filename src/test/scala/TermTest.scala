@@ -2,20 +2,25 @@ import org.junit.Test
 import org.junit.Assert.*
 
 class TermTest:
-  @Test def shouldGenerateDifferentVar(): Unit =
+  @Test def should_generate_different_var(): Unit =
     val v1: Var = Var.fresh_var()
     val v2: Var = Var.fresh_var()
     assertNotEquals(v1.name, v2.name)
 
-  @Test def shouldAlphaConvertVar(): Unit =
+  /**
+   * x => x
+   */
+  @Test def should_alpha_convert_var(): Unit =
     var old: Var = Var("x")
     var new_var: Var = barendregt(old) match
       case Var(x) => Var(x)
 
-    assertNotEquals(old.name, new_var.name)
-    assertNotEquals(old, new_var)
+    assertEquals(old, new_var)
 
-  @Test def shouldAlphaConvertAbs(): Unit =
+  /**
+   * lambda x.x => lambda V2.V2
+   */
+  @Test def should_alpha_convert_abs_with_single_bound_var(): Unit =
     var x = Var("x")
     var abs = Abs("x", x)
 
@@ -26,18 +31,39 @@ class TermTest:
     assertNotEquals(abs.arg, new_abs.arg)
     assertNotEquals(abs.body, new_abs.body)
 
-  @Test def shouldAlphaConvertApp(): Unit =
+  /**
+   * lambda x.y x => lambda V2.y V2
+   */
+  @Test def should_alpha_convert_abs_with_single_bound_var_and_single_free_var(): Unit =
     var x = Var("x")
     var y = Var("y")
-    var app = App(x, y)
+    var app = App(y, x)
+    var abs = Abs("x", app)
 
-    var new_app: App = barendregt(app) match
-      case App(term1, term2) => App(term1, term2)
+    barendregt(abs) match
+      case Abs(arg, body) =>
+        assertEquals(Var.last_var().name, arg)
+        assertEquals(y, body match {
+          case App(term1, term2) => term1
+        })
 
-    var new_var: Var = new_app.term2 match
-      case Var(x) => Var(x)
+  /**
+   * lambda x.x lambda x.x => lambda x.x lambda b.b
+   */
+  @Test def shouldAlphaConvertApp(): Unit =
+    var x = Var("x")
+    var I = Abs("x", x)
+    var I_2 = Abs("x", x)
 
-    assertNotEquals(app, new_app)
-    assertNotEquals(app.term2, new_app.term2)
-    assertNotEquals(y.name, new_var.name)
+    var app = App(I, I_2)
 
+    barendregt(app) match
+      case App(term1, term2) =>
+
+        term1 match
+          case Abs(arg, body) =>
+            assertEquals(x.name, arg)
+            assertEquals(x, body)
+
+        term2 match
+          case Abs(arg, body) => assertEquals(Var.last_var().name, arg)

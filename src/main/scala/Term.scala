@@ -10,11 +10,14 @@ case class Abs(arg: String, body: Term)
   extends Term
 
 object Var {
-  var last_var: Int = 1
+  var last: Int = 1
 
   def fresh_var(): Var =
-    Var.last_var = Var.last_var + 1
-    return Var("V" + Var.last_var)
+    Var.last = Var.last + 1
+    return Var("V" + Var.last)
+
+  def last_var(): Var =
+    return Var("V" + Var.last)
 }
 
 def print_term(term: Term): Unit =
