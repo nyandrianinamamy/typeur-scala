@@ -38,10 +38,10 @@ object Var {
 
   def fresh_var(): Var =
     Var.last = Var.last + 1
-    return Var("V" + Var.last)
+    return Var(s"x${Var.last}")
 
   def last_var(): Var =
-    return Var("V" + Var.last)
+    return Var(s"x${Var.last}")
 }
 
 /**
@@ -49,13 +49,16 @@ object Var {
  *
  * @param term term to print
  */
-def print_term(term: Term): Unit =
-  def to_string(term: Term): String = term match
+def print_term(term: Term): String =
+  def print_term(term: Term): String = term match
     case Var(name) => name
-    case App(term1, term2) => "(" + to_string(term1) + " " + to_string(term2) + ")"
-    case Abs(arg, body) => "(fun " + to_string(arg) + " -> " + to_string(body) + ")"
+    case App(term1, term2) => "(" + print_term(term1) + " " + print_term(term2) + ")"
+    case Abs(arg, body) => "(fun " + print_term(arg) + " -> " + print_term(body) + ")"
 
-  println(to_string(term))
+  val term_to_string = print_term(term)
+
+  println(term_to_string)
+  term_to_string
 
 /**
  * Alpha convert a term according to Barendregt convention.
@@ -63,16 +66,16 @@ def print_term(term: Term): Unit =
  * @param l term to alpha-convert
  * @return term alpha-converted
  */
-def barendregt(l: Term): Term =
-  def _barendregt(l: Term, remp: Map[Var, Var]): Term = l match
+def alpha_conversion(l: Term): Term =
+  def barendregt(l: Term, remp: Map[Var, Var]): Term = l match
     case Var(x) =>
       remp get Var(x) getOrElse Var(x)
 
     case Abs(arg, body) =>
       var new_var: Var = remp get arg getOrElse Var.fresh_var()
-      Abs(new_var, _barendregt(body, remp + (arg -> new_var)))
+      Abs(new_var, barendregt(body, remp + (arg -> new_var)))
 
     case App(term1, term2) =>
-      App(_barendregt(term1, remp), _barendregt(term2, remp))
+      App(barendregt(term1, remp), barendregt(term2, remp))
 
-  _barendregt(l, Map())
+  barendregt(l, Map())

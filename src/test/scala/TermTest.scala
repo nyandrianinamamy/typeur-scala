@@ -3,33 +3,31 @@ import org.junit.Assert.*
 
 class TermTest:
   @Test def should_generate_different_var(): Unit =
-    val v1: Var = Var.fresh_var()
-    val v2: Var = Var.fresh_var()
-    assertNotEquals(v1, v2)
+    assertNotEquals(Var.fresh_var(), Var.fresh_var())
 
   /**
    * x => x
    */
   @Test def should_alpha_convert_var(): Unit =
-    var old: Var = Var("x")
-    var new_var: Var = barendregt(old) match
-      case Var(x) => Var(x)
-
-    assertEquals(old, new_var)
+    val x = Var("x")
+    alpha_conversion(x) match
+      case y: Var => assertEquals(x, y)
+      case _ => assertTrue(false)
 
   /**
    * lambda x.x => lambda V2.V2
    */
   @Test def should_alpha_convert_abs_with_single_bound_var(): Unit =
-    var x = Var("x")
-    var abs = Abs(x, x)
+    val x = Var("x")
+    val abs = Abs(x, x)
 
-    var new_abs: Abs = barendregt(abs) match
-      case Abs(arg, body) => Abs(arg, body)
+    alpha_conversion(abs) match
+      case new_abs: Abs =>
+        assertNotEquals(abs, new_abs)
+        assertNotEquals(abs.arg, new_abs.arg)
+        assertNotEquals(abs.body, new_abs.body)
 
-    assertNotEquals(abs, new_abs)
-    assertNotEquals(abs.arg, new_abs.arg)
-    assertNotEquals(abs.body, new_abs.body)
+      case _ => assertTrue(false)
 
   /**
    * lambda x.y x => lambda V2.y V2
@@ -40,28 +38,28 @@ class TermTest:
     var app = App(y, x)
     var abs = Abs(x, app)
 
-    barendregt(abs) match
+    alpha_conversion(abs) match
       case Abs(arg, body) =>
         assertEquals(Var.last_var(), arg)
-        assertEquals(y, body match {
+        assertEquals(y, body match
           case App(term1, term2) => term1
-        })
+        )
 
   /**
    * lambda y.y x => lambda V2.V2 x
    */
-  @Test def should_alpha_convert_abs_with_single_bound_var_and_single_free_var_1(): Unit =
+  @Test def should_alpha_convert_abs_with_single_bound_var_and_single_free_var_inverted(): Unit =
     var x = Var("x")
     var y = Var("y")
     var app = App(y, x)
     var abs = Abs(y, app)
 
-    barendregt(abs) match
+    alpha_conversion(abs) match
       case Abs(arg, body) =>
         assertEquals(Var.last_var(), arg)
-        assertEquals(x, body match {
+        assertEquals(x, body match
           case App(term1, term2) => term2
-        })
+        )
 
   /**
    * lambda x.x lambda x.x => lambda a.a lambda b.b
@@ -73,18 +71,20 @@ class TermTest:
 
     var app = App(I, I_2)
 
-    barendregt(app) match
+    alpha_conversion(app) match
       case App(term1, term2) =>
 
         term1 match
-          case Abs(arg, body) =>
-            assertNotEquals(I, Abs(arg, body))
+          case abs: Abs =>
+            assertNotEquals(I, abs)
 
         term2 match
-          case Abs(arg, body) =>
-            assertNotEquals(I_2, Abs(arg, body))
+          case abs: Abs =>
+            assertNotEquals(I_2, abs)
 
         assertNotEquals(term1, term2)
+
+      case _ => assertTrue(false)
 
   @Test def alpha_convert_KII_to_motivate_myself(): Unit =
     val x = Var("x")
@@ -96,8 +96,33 @@ class TermTest:
 
     print_term(KII)
 
-    KII = barendregt(KII) match {
+    KII = alpha_conversion(KII) match
       case App(term1, term2) => App(term1, term2)
-    }
+      case _ => assert(false)
 
     print_term(KII)
+
+  @Test def should_print_term(): Unit =
+    val x = Var("x")
+    val abs = Abs(x, x)
+    val app = App(x, x)
+
+    val x_string = print_term(x)
+    val abs_string = print_term(abs)
+    val app_string = print_term(app)
+
+    assertEquals(x.name, x_string)
+    assertEquals(s"(fun ${abs.arg.name} -> ${
+      abs.body match {
+        case Var(x) => x
+      }
+    })", abs_string)
+    assertEquals(s"(${
+      app.term1 match {
+        case Var(x) => x
+      }
+    } ${
+      app.term2 match {
+        case Var(x) => x
+      }
+    })", app_string)
