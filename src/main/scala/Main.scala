@@ -1,5 +1,3 @@
-import scala.collection.mutable.Map
-
 @main def hello: Unit =
   val x = Var("x")
   val y = Var("y")
@@ -23,11 +21,14 @@ def barendregt(l: Term): Term =
     case Abs(arg, body) =>
       if (!remp.contains(arg))
         var new_var = Var.fresh_var()
-        remp(arg) = new_var
-      Abs(remp(arg).name, _barendregt(body, remp))
+        Abs(new_var.name, _barendregt(body, remp + (arg -> new_var)))
+      else
+        Abs(remp(arg).name, _barendregt(body, remp))
 
     case App(term1, term2) =>
-      App(_barendregt(term1, remp), _barendregt(term2, remp))
+      var new_term1 = _barendregt(term1, remp)
+      var new_term2 = _barendregt(term2, remp)
+      App(new_term1, new_term2)
 
   _barendregt(l, Map())
 

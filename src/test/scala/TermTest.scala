@@ -77,7 +77,11 @@ class TermTest:
       case App(term1, term2) =>
 
         term1 match
-          case Abs(arg, body) => assertEquals(Var.last_var().name, arg)
+          case Abs(arg, body) =>
+            assertNotEquals(I, Abs(arg, body))
 
         term2 match
-          case Abs(arg, body) => assertEquals(Var.last_var().name, arg)
+          case Abs(arg, body) =>
+            assertNotEquals(I_2, Abs(arg, body))
+
+        assertNotEquals(term1, term2)
