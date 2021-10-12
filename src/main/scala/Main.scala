@@ -6,7 +6,7 @@ import scala.collection.mutable.Map
   val app = App(x, y)
   val arr = App(x, y)
 
-  var I = Abs("x", x)
+  var I = Abs("x", app)
 
   print_term(I)
 
@@ -27,7 +27,7 @@ def barendregt(l: Term): Term =
       Abs(remp(arg).name, _barendregt(body, remp))
 
     case App(term1, term2) =>
-      App(term1, _barendregt(term2, remp))
+      App(_barendregt(term1, remp), _barendregt(term2, remp))
 
   _barendregt(l, Map())
 

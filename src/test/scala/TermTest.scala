@@ -48,7 +48,23 @@ class TermTest:
         })
 
   /**
-   * lambda x.x lambda x.x => lambda x.x lambda b.b
+   * lambda y.y x => lambda V2.V2 x
+   */
+  @Test def should_alpha_convert_abs_with_single_bound_var_and_single_free_var_1(): Unit =
+    var x = Var("x")
+    var y = Var("y")
+    var app = App(y, x)
+    var abs = Abs("y", app)
+
+    barendregt(abs) match
+      case Abs(arg, body) =>
+        assertEquals(Var.last_var().name, arg)
+        assertEquals(x, body match {
+          case App(term1, term2) => term2
+        })
+
+  /**
+   * lambda x.x lambda x.x => lambda a.a lambda b.b
    */
   @Test def shouldAlphaConvertApp(): Unit =
     var x = Var("x")
@@ -61,9 +77,7 @@ class TermTest:
       case App(term1, term2) =>
 
         term1 match
-          case Abs(arg, body) =>
-            assertEquals(x.name, arg)
-            assertEquals(x, body)
+          case Abs(arg, body) => assertEquals(Var.last_var().name, arg)
 
         term2 match
           case Abs(arg, body) => assertEquals(Var.last_var().name, arg)
