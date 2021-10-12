@@ -1,14 +1,38 @@
+/**
+ * Lambda calculus definition
+ * M ::= x | lambda x.M | M N
+ */
 trait Term
 
+/**
+ * Variable x
+ *
+ * @param name x
+ */
 case class Var(name: String)
   extends Term
 
+/**
+ * Application M N
+ *
+ * @param term1 M
+ * @param term2 N
+ */
 case class App(term1: Term, term2: Term)
   extends Term
 
+/**
+ * Abstraction lambda x.M
+ *
+ * @param arg  x
+ * @param body M
+ */
 case class Abs(arg: Var, body: Term)
   extends Term
 
+/**
+ * Contains last variable used for alpha conversion
+ */
 object Var {
   var last: Int = 1
 
@@ -20,6 +44,11 @@ object Var {
     return Var("V" + Var.last)
 }
 
+/**
+ * Print term to human readable form
+ *
+ * @param term term to print
+ */
 def print_term(term: Term): Unit =
   def to_string(term: Term): String = term match
     case Var(name) => name
@@ -28,6 +57,12 @@ def print_term(term: Term): Unit =
 
   println(to_string(term))
 
+/**
+ * Alpha convert a term according to Barendregt convention.
+ *
+ * @param l term to alpha-convert
+ * @return term alpha-converted
+ */
 def barendregt(l: Term): Term =
   def _barendregt(l: Term, remp: Map[Var, Var]): Term = l match
     case Var(x) =>
