@@ -16,7 +16,7 @@
 def barendregt(l: Term): Term =
   def _barendregt(l: Term, remp: Map[String, Var]): Term = l match
     case Var(x) =>
-      if (!remp.contains(x)) Var(x) else remp(x)
+      remp get x getOrElse Var(x)
 
     case Abs(arg, body) =>
       if (!remp.contains(arg))
