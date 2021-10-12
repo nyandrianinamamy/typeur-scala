@@ -5,7 +5,7 @@ class TermTest:
   @Test def should_generate_different_var(): Unit =
     val v1: Var = Var.fresh_var()
     val v2: Var = Var.fresh_var()
-    assertNotEquals(v1.name, v2.name)
+    assertNotEquals(v1, v2)
 
   /**
    * x => x
@@ -22,7 +22,7 @@ class TermTest:
    */
   @Test def should_alpha_convert_abs_with_single_bound_var(): Unit =
     var x = Var("x")
-    var abs = Abs("x", x)
+    var abs = Abs(x, x)
 
     var new_abs: Abs = barendregt(abs) match
       case Abs(arg, body) => Abs(arg, body)
@@ -38,11 +38,11 @@ class TermTest:
     var x = Var("x")
     var y = Var("y")
     var app = App(y, x)
-    var abs = Abs("x", app)
+    var abs = Abs(x, app)
 
     barendregt(abs) match
       case Abs(arg, body) =>
-        assertEquals(Var.last_var().name, arg)
+        assertEquals(Var.last_var(), arg)
         assertEquals(y, body match {
           case App(term1, term2) => term1
         })
@@ -54,11 +54,11 @@ class TermTest:
     var x = Var("x")
     var y = Var("y")
     var app = App(y, x)
-    var abs = Abs("y", app)
+    var abs = Abs(y, app)
 
     barendregt(abs) match
       case Abs(arg, body) =>
-        assertEquals(Var.last_var().name, arg)
+        assertEquals(Var.last_var(), arg)
         assertEquals(x, body match {
           case App(term1, term2) => term2
         })
@@ -68,8 +68,8 @@ class TermTest:
    */
   @Test def shouldAlphaConvertApp(): Unit =
     var x = Var("x")
-    var I = Abs("x", x)
-    var I_2 = Abs("x", x)
+    var I = Abs(x, x)
+    var I_2 = Abs(x, x)
 
     var app = App(I, I_2)
 
@@ -85,3 +85,19 @@ class TermTest:
             assertNotEquals(I_2, Abs(arg, body))
 
         assertNotEquals(term1, term2)
+
+  @Test def alpha_convert_KII_to_motivate_myself(): Unit =
+    val x = Var("x")
+    val y = Var("y")
+    val K = Abs(x, Abs(y, x))
+    val I = Abs(x, x)
+
+    var KII = App(App(K, I), I)
+
+    print_term(KII)
+
+    KII = barendregt(KII) match {
+      case App(term1, term2) => App(term1, term2)
+    }
+
+    print_term(KII)
