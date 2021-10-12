@@ -113,16 +113,13 @@ class TermTest:
 
     assertEquals(x.name, x_string)
     assertEquals(s"(fun ${abs.arg.name} -> ${
-      abs.body match {
+      abs.body match
         case Var(x) => x
-      }
     })", abs_string)
     assertEquals(s"(${
-      app.term1 match {
+      app.term1 match
         case Var(x) => x
-      }
     } ${
-      app.term2 match {
+      app.term2 match
         case Var(x) => x
-      }
     })", app_string)

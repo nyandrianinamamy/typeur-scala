@@ -52,8 +52,8 @@ object Var {
 def print_term(term: Term): String =
   def print_term(term: Term): String = term match
     case Var(name) => name
-    case App(term1, term2) => "(" + print_term(term1) + " " + print_term(term2) + ")"
-    case Abs(arg, body) => "(fun " + print_term(arg) + " -> " + print_term(body) + ")"
+    case App(term1, term2) => s"(${print_term(term1)} ${print_term(term2)})"
+    case Abs(arg, body) => s"(fun ${print_term(arg)} -> ${print_term(body)})"
 
   val term_to_string = print_term(term)
 
