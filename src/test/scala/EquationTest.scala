@@ -18,9 +18,9 @@ class EqTest:
       case l: List[Eq] =>
         l foreach {
           case Eq(lterm: TVar, rterm: TVar) =>
-            assertEquals(Eq(lterm, rterm).toString(), "x3 = x2")
+            assertEquals("x3 = x2", Eq(lterm, rterm).toString())
           case Eq(lterm: TVar, rterm: Arrow) =>
-            assertEquals(Eq(lterm, rterm).toString(), "x0 = (x2 -> x3)")
+            assertEquals("x0 = (x2 -> x3)", Eq(lterm, rterm).toString())
         }
 
   /**
