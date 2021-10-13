@@ -16,3 +16,13 @@ def print_type(t: Type): String =
   println(printed_type)
 
   printed_type
+
+/**
+ * Compare two types
+ *
+ * @param ltype left type
+ * @param rtype right type
+ * @return true if left equals right
+ */
+def sequal_type(ltype: Type, rtype: Type): Boolean =
+  ltype.equals(rtype)
