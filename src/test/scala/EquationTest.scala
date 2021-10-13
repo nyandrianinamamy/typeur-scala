@@ -7,25 +7,14 @@ class EquationTest:
   @Before def initialize(): Unit =
     Var.last = 1
 
-  @Test def should_get_var_env(): Unit =
-    val x = Var("x")
-    val t0 = TVar(Var("x0"))
-
-    generate_equation(x, t0, Map(x -> t0)) match
-      case l: List[Equation] => l foreach {
-        case eq: Equation => assertEquals("x0 = x0", equation_to_string(eq))
-      }
-
+  /**
+   * lamba x.x
+   */
   @Test def should_gen_eq_abs(): Unit =
     val x = Var("x")
     val I = Abs(x, x)
 
-    var `0` = Var("x0")
-    var t0 = TVar(`0`)
-
-    var expected = List(Equation(t0, t0))
-
-    generate_equation(I, t0, Map()) match
+    generate_equation(I) match
       case l: List[Equation] =>
         l foreach {
           case Equation(lterm: TVar, rterm: TVar) =>
@@ -33,3 +22,23 @@ class EquationTest:
           case Equation(lterm: TVar, rterm: Arrow) =>
             assertEquals(equation_to_string(Equation(lterm, rterm)), "x0 = (x2 -> x3)")
         }
+
+  /**
+   * lambda x.x x
+   */
+  @Test def should_gen_eq_app(): Unit =
+    val x = Var("x")
+    val I = Abs(x, x)
+    val `I x` = App(I, x)
+
+    val `0` = Var("x0")
+    val t0 = TVar(`0`)
+
+    val expected = "(x2 -> x0) = (x3 -> x4)" :: "x4 = x3" :: "x2 = x3" :: List()
+
+    generate_equation(`I x`) match {
+      case l: List[Equation] =>
+        l foreach {
+          case eq: Equation => assertTrue(expected exists (str => str == equation_to_string(eq)))
+        }
+    }
