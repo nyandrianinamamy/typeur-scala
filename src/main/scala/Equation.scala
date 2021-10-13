@@ -1,17 +1,16 @@
 import java.util.NoSuchElementException
 import scala.collection.mutable.Map
 
-case class Equation(ltype: Type, rtype: Type)
+case class Eq(ltype: Type, rtype: Type):
+  override def toString(): String =
+    s"${type_to_string(ltype)} = ${type_to_string(rtype)}"
 
-def equation_to_string(eq: Equation): String = eq match
-  case Equation(ltype, rtype) => s"${type_to_string(ltype)} = ${type_to_string(rtype)}"
-
-def generate_equation(term: Term): List[Equation] =
-  def generate_equation(term: Term, t0: Type, env: Map[Var, Type]): List[Equation] =
+def generate_equation(term: Term): List[Eq] =
+  def generate_equation(term: Term, t0: Type, env: Map[Var, Type]): List[Eq] =
     term match
       case x: Var =>
         env get x match {
-          case Some(a) => Equation(t0, a) :: List()
+          case Some(a) => Eq(t0, a) :: List()
           case None =>
             println(env)
             throw NoSuchElementException(s"Var $x not found in environment")
@@ -22,7 +21,7 @@ def generate_equation(term: Term): List[Equation] =
         val t2 = TVar(Var.fresh_var())
         val `t1->t2` = Arrow(t1, t2)
         env(arg) = t1
-        Equation(t0, `t1->t2`) :: generate_equation(body, t2, env)
+        Eq(t0, `t1->t2`) :: generate_equation(body, t2, env)
 
       case App(term1, term2) =>
         val t1 = TVar(Var.fresh_var())

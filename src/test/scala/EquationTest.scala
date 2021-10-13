@@ -2,7 +2,7 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
 
-class EquationTest:
+class EqTest:
 
   @Before def initialize(): Unit =
     Var.last = 1
@@ -15,12 +15,12 @@ class EquationTest:
     val I = Abs(x, x)
 
     generate_equation(I) match
-      case l: List[Equation] =>
+      case l: List[Eq] =>
         l foreach {
-          case Equation(lterm: TVar, rterm: TVar) =>
-            assertEquals(equation_to_string(Equation(lterm, rterm)), "x3 = x2")
-          case Equation(lterm: TVar, rterm: Arrow) =>
-            assertEquals(equation_to_string(Equation(lterm, rterm)), "x0 = (x2 -> x3)")
+          case Eq(lterm: TVar, rterm: TVar) =>
+            assertEquals(Eq(lterm, rterm).toString(), "x3 = x2")
+          case Eq(lterm: TVar, rterm: Arrow) =>
+            assertEquals(Eq(lterm, rterm).toString(), "x0 = (x2 -> x3)")
         }
 
   /**
@@ -37,8 +37,8 @@ class EquationTest:
     val expected = "(x2 -> x0) = (x3 -> x4)" :: "x4 = x3" :: "x2 = x3" :: List()
 
     generate_equation(`I x`) match {
-      case l: List[Equation] =>
+      case l: List[Eq] =>
         l foreach {
-          case eq: Equation => assertTrue(expected exists (str => str == equation_to_string(eq)))
+          case eq: Eq => assertTrue(expected exists (str => str == eq.toString()))
         }
     }
