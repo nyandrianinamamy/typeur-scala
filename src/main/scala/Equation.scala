@@ -12,7 +12,6 @@ def generate_equation(term: Term): List[Eq] =
         env get x match {
           case Some(a) => Eq(t0, a) :: List()
           case None =>
-            println(env)
             throw NoSuchElementException(s"Var $x not found in environment")
         }
 
@@ -27,10 +26,7 @@ def generate_equation(term: Term): List[Eq] =
         val t1 = TVar(Var.fresh_var())
         val `t1->t0` = Arrow(t1, t0)
 
-        val eq1 = generate_equation(term1, `t1->t0`, env)
-        val eq2 = generate_equation(term2, t1, env)
-
-        eq1 ::: eq2
+        generate_equation(term1, `t1->t0`, env) ::: generate_equation(term2, t1, env)
 
   var env: Map[Var, Type] = Map() // Mutable Map
   val t0 = TVar(Var("x0")) // Type goal alias T0
