@@ -3,7 +3,7 @@ import scala.collection.mutable.Map
 
 case class Eq(ltype: Type, rtype: Type):
   override def toString(): String =
-    s"${type_to_string(ltype)} = ${type_to_string(rtype)}"
+    s"${ltype.toString()} = ${rtype.toString()}"
 
 def generate_equation(term: Term): List[Eq] =
   def generate_equation(term: Term, t0: Type, env: Map[Var, Type]): List[Eq] =
@@ -33,7 +33,6 @@ def generate_equation(term: Term): List[Eq] =
         eq1 ::: eq2
 
   var env: Map[Var, Type] = Map() // Mutable Map
-  val `0` = Var("x0")
-  val t0 = TVar(`0`)
+  val t0 = TVar(Var("x0")) // Type goal alias T0
 
   generate_equation(term, t0, env)

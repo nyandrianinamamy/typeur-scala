@@ -1,14 +1,12 @@
 trait Type
 
-case class TVar(x: Var)
-  extends Type
+case class TVar(x: Var) extends Type :
+  override def toString(): String =
+    x.name
 
-case class Arrow(arg: Type, res: Type)
-  extends Type
-
-def type_to_string(t: Type): String = t match
-  case TVar(x) => x.name
-  case Arrow(arg, res) => s"(${type_to_string(arg)} -> ${type_to_string(res)})"
+case class Arrow(arg: Type, res: Type) extends Type :
+  override def toString(): String =
+    s"(${arg.toString()} -> ${res.toString()})"
 
 /**
  * Compare two types

@@ -7,11 +7,9 @@ class TypeTest:
     val tx = TVar(x)
     val tarrow = Arrow(tx, tx)
 
-    type_to_string(tx) match
-      case str: String => assertEquals("x", str)
+    assertEquals("x", tx.toString())
 
-    type_to_string(tarrow) match
-      case str: String => assertEquals("(x -> x)", str)
+    assertEquals("(x -> x)", tarrow.toString())
 
   @Test def should_compare_type(): Unit =
     val x = Var("x")
