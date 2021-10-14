@@ -23,3 +23,24 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
+
+/**
+ * First step of unification
+ * - Removes an eq if ltype = rtype
+ *
+ * @param eqs
+ * @param i
+ * @return
+ */
+def unification_etape(eqs: List[Eq], i: Int): List[Eq] =
+  eqs match
+    case rest@List(_) => rest
+    case h :: t => h match
+      case eq@Eq(ltype, rtype) =>
+        if (ltype.equals(rtype))
+          unification_etape(t, i + 1)
+        else
+          unification_etape(h :: t, i + 1)
+      case _ => throw new Error("MAtch error on eq")
+    case _ => throw new Error("Unification impossible")
+
