@@ -21,3 +21,32 @@ class UnificationTest:
     assertFalse(occur_check(y, tx))
     assertTrue(occur_check(x, `tx->ty`))
     assertTrue(occur_check(y, `tx->ty`))
+
+  @Test def substitue_in_tvar(): Unit =
+    val x = Var("x")
+    val y = Var("y")
+
+    val tx = TVar(x)
+    val ty = TVar(y)
+
+    substitue(x, ty, tx) match
+      case v: TVar => v.equals(ty)
+      case _ => assert(false)
+
+  @Test def substitue_in_arrow(): Unit =
+    val x = Var("x")
+    val y = Var("y")
+    val z = Var("z")
+
+    val tx = TVar(x)
+    val ty = TVar(y)
+    val tz = TVar(z)
+
+    val `tx->ty` = Arrow(tx, ty)
+
+    substitue(x, tz, `tx->ty`) match
+      case Arrow(arg, res) =>
+        assertTrue(arg.equals(tz))
+
+        substitue(y, tz, Arrow(arg, res)) match
+          case Arrow(arg1, res1) => assertTrue(res1.equals(tz))
