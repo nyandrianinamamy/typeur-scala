@@ -10,3 +10,12 @@
 
   alpha_conversion(KII) match
     case app: App => print_term(app)
+
+  val t0 = TVar(Var("x0"))
+
+  val env: Map[Var, Type] = Map(x -> t0)
+
+  generate_equation(KII, t0, env) match
+    case l: List[Eq] => l foreach {
+      case eq: Eq => println(eq.toString())
+    }
