@@ -41,17 +41,19 @@ class EqTest:
    */
   @Test def should_gen_eq_app(): Unit =
     val x = Var("x")
+    val tx = TVar(x)
     val I = Abs(x, x)
     val `I x` = App(I, x)
 
     val `0` = Var("x0")
     val t0 = TVar(`0`)
 
-    val expected = "(x2 -> x0) = (x3 -> x4)" :: "x4 = x3" :: "x2 = x0" :: List()
+    val expected = "(x2 -> x0) = (x3 -> x4)" :: "x4 = x3" :: "x2 = x" :: List()
 
-    val env: Map[Var, Type] = Map(x -> t0)
+    val env: Map[Var, Type] = Map(x -> tx) // Suppose x is type tx
     generate_equation(`I x`, t0, env) match
       case l: List[Eq] =>
+        println(l)
         l foreach {
           case eq: Eq => assertTrue(expected exists (str => str == eq.toString()))
         }
