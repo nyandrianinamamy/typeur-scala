@@ -24,9 +24,15 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
 
+def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
+  eqs map {
+    case Eq(ltype, rtype) => Eq(substitue(x, s, ltype), substitue(x, s, rtype))
+  }
+
 /**
  * First step of unification
  * - Removes an eq if ltype = rtype
+ * - Remove X = Td and eqs[X/Td] if X not in Td
  *
  * @param eqs
  * @param i
@@ -34,13 +40,14 @@ def substitue(x: Var, s: Type, t: Type): Type =
  */
 def unification_etape(eqs: List[Eq], i: Int): List[Eq] =
   eqs match
-    case rest@List(_) => rest
-    case h :: t => h match
-      case eq@Eq(ltype, rtype) =>
-        if (ltype.equals(rtype))
-          unification_etape(t, i + 1)
-        else
-          unification_etape(h :: t, i + 1)
-      case _ => throw new Error("MAtch error on eq")
-    case _ => throw new Error("Unification impossible")
+    case Nil => List()
 
+    case h :: t => h match
+
+      case Eq(l, r) if l.equals(r) =>
+        unification_etape(t, i + 1)
+
+      case Eq(TVar(x), r) if !occur_check(x, r) =>
+        unification_etape(substitue_partout(x, r, t), i + 1)
+
+      case _ => h :: t

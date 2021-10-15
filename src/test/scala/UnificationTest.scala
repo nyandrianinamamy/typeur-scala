@@ -1,6 +1,7 @@
 import org.junit.Test
 import org.junit.Assert.*
 
+
 class UnificationTest:
   @Test def occurence_in_tvar(): Unit =
     val x = Var("x")
@@ -51,8 +52,25 @@ class UnificationTest:
         substitue(y, tz, Arrow(arg, res)) match
           case Arrow(arg1, res1) => assertTrue(res1.equals(tz))
 
+  @Test def substitue_in_equations(): Unit =
+    val x = Var("x")
+    val y = Var("y")
+    val z = Var("z")
+    val tx = TVar(x)
+    val ty = TVar(y)
+    val tz = TVar(z)
 
-  @Test def should_remove_same_type_in_eq(): Unit =
+    val l: List[Eq] = Eq(tx, ty) :: Eq(ty, tx) :: List()
+
+    substitue_partout(x, tz, l) match {
+      case r: List[Eq] => assertEquals(Eq(tz, ty) :: Eq(ty, tz) :: List(), r)
+    }
+
+    substitue_partout(y, tz, l) match {
+      case r: List[Eq] => assertEquals(Eq(tx, tz) :: Eq(tz, tx) :: List(), r)
+    }
+
+  @Test def `should_remove_X_=_Y_in_eqs`(): Unit =
     val x = Var("x")
     val y = Var("y")
     val tx = TVar(x)
@@ -67,3 +85,24 @@ class UnificationTest:
       case h :: t => assertTrue(h.equals(neq))
       case nil => assertTrue(false)
     }
+
+  @Test def `should_remove_X_=_Td_and_eqs[X/Td]`: Unit =
+    val X = Var("X")
+    val d = Var("d")
+    val Z = Var("Z")
+    val TX = TVar(X)
+    val Td = TVar(d)
+    val TZ = TVar(Z)
+    val `TX -> TX` = Arrow(TX, TX)
+    val `TZ -> TZ` = Arrow(TZ, TZ)
+    val `Td -> Td` = Arrow(Td, Td)
+
+    val eqs: List[Eq] = Eq(TX, Td) :: Eq(`TX -> TX`, `TZ -> TZ`) :: List()
+
+    assertFalse(occur_check(X, Td)) // X should not appear in Td
+
+    unification_etape(eqs, 0) match
+      case l: List[Eq] => assertEquals(Eq(`Td -> Td`, `TZ -> TZ`) :: List(), l)
+      case Nil => assertTrue(false)
+
+
