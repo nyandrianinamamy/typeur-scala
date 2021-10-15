@@ -35,6 +35,7 @@ case class Abs(arg: Var, body: Term)
  */
 object Var {
   var last: Int = 1
+  val `0` = Var("x0")
 
   def fresh_var(): Var =
     Var.last = Var.last + 1

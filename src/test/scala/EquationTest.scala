@@ -7,14 +7,14 @@ class EqTest:
   @Before def initialize(): Unit =
     Var.last = 1
 
-  @Test def `should generate equation on TVar`(): Unit =
+  @Test def should_generate_equation_on_TVar(): Unit =
     val x = Var("x")
-    val but = Var("x0")
-    val Tbut = TVar(but)
-    val env: Map[Var, Type] = Map(x -> Tbut)
+    val tx = TVar(x)
 
-    generate_equation(x, Tbut, env) match
-      case h :: q => assertEquals("x0 = x0", h.toString())
+    val env: Map[Var, Type] = Map(x -> tx) // Suppose x is type tx
+
+    generate_equation(x, TVar.t0, env) match
+      case h :: q => assertEquals("x0 = x", h.toString())
 
   /**
    * lamba x.x
@@ -22,12 +22,10 @@ class EqTest:
   @Test def should_gen_eq_abs(): Unit =
     val x = Var("x")
     val I = Abs(x, x)
+    val tx = TVar(x)
 
-    val `0` = Var("x0")
-    val t0 = TVar(`0`)
-
-    val env: Map[Var, Type] = Map(x -> t0)
-    generate_equation(I, t0, env) match
+    val env: Map[Var, Type] = Map(x -> tx) // Suppose x is type tx
+    generate_equation(I, TVar.t0, env) match
       case l: List[Eq] =>
         l foreach {
           case Eq(lterm: TVar, rterm: TVar) =>
@@ -45,13 +43,10 @@ class EqTest:
     val I = Abs(x, x)
     val `I x` = App(I, x)
 
-    val `0` = Var("x0")
-    val t0 = TVar(`0`)
-
     val expected = "(x2 -> x0) = (x3 -> x4)" :: "x4 = x3" :: "x2 = x" :: List()
 
     val env: Map[Var, Type] = Map(x -> tx) // Suppose x is type tx
-    generate_equation(`I x`, t0, env) match
+    generate_equation(`I x`, TVar.t0, env) match
       case l: List[Eq] =>
         println(l)
         l foreach {
