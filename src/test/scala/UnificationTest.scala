@@ -50,3 +50,20 @@ class UnificationTest:
 
         substitue(y, tz, Arrow(arg, res)) match
           case Arrow(arg1, res1) => assertTrue(res1.equals(tz))
+
+
+  @Test def should_remove_same_type_in_eq(): Unit =
+    val x = Var("x")
+    val y = Var("y")
+    val tx = TVar(x)
+    val ty = TVar(y)
+    val eq = Eq(tx, tx)
+    val eq1 = Eq(tx, tx)
+    val neq = Eq(tx, ty)
+
+    val l = eq :: eq1 :: neq :: List[Eq]()
+
+    unification_etape(l, 0) match {
+      case h :: t => assertTrue(h.equals(neq))
+      case nil => assertTrue(false)
+    }

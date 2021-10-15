@@ -42,16 +42,3 @@ class EqTest:
           case eq: Eq => assertTrue(expected exists (str => str == eq.toString()))
         }
     }
-
-  @Test def unify_tvar_equation(): Unit =
-    val x = Var("x")
-    val y = Var("y")
-    val tx = TVar(x)
-    val ty = TVar(y)
-    val eq = Eq(tx, tx)
-    val eq1 = Eq(tx, tx)
-    val neq = Eq(tx, ty)
-
-    val l = eq :: eq1 :: neq :: List[Eq]()
-
-    println(unification_etape(l, 0))
