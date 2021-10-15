@@ -82,11 +82,11 @@ class UnificationTest:
     val l = eq :: eq1 :: neq :: List[Eq]()
 
     unification_etape(l, 0) match {
-      case h :: t => assertTrue(h.equals(neq))
+      case l: List[Eq] => assertTrue(l.isEmpty)
       case nil => assertTrue(false)
     }
 
-  @Test def `should_remove_X_=_Td_and_eqs[X/Td]`: Unit =
+  @Test def `should_remove_X_=_Td_and_eqs[X/Td]`(): Unit =
     val X = Var("X")
     val d = Var("d")
     val Z = Var("Z")
@@ -102,7 +102,19 @@ class UnificationTest:
     assertFalse(occur_check(X, Td)) // X should not appear in Td
 
     unification_etape(eqs, 0) match
-      case l: List[Eq] => assertEquals(Eq(`Td -> Td`, `TZ -> TZ`) :: List(), l)
+      case l: List[Eq] => assertTrue(l.isEmpty)
       case Nil => assertTrue(false)
 
 
+  @Test def `should_throw_on X = X -> X`(): Unit =
+    val X = Var("X")
+    val TX = TVar(X)
+    val `TX -> TX` = Arrow(TX, TX)
+
+    val eqs: List[Eq] = Eq(TX, `TX -> TX`) :: List()
+
+    try {
+      unification_etape(eqs, 0)
+    } catch {
+      case e: Error => assertEquals("Cannot unify", e.getMessage)
+    }

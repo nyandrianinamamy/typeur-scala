@@ -31,8 +31,12 @@ def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
 
 /**
  * First step of unification
+ *
  * - Removes an eq if ltype = rtype
+ *
  * - Remove X = Td and eqs[X/Td] if X not in Td
+ *
+ * - Remove a -> b = c -> d and replace with a = c and b = d
  *
  * @param eqs
  * @param i
@@ -50,4 +54,10 @@ def unification_etape(eqs: List[Eq], i: Int): List[Eq] =
       case Eq(TVar(x), r) if !occur_check(x, r) =>
         unification_etape(substitue_partout(x, r, t), i + 1)
 
-      case _ => h :: t
+      case Eq(l, TVar(x)) if !occur_check(x, l) =>
+        unification_etape(substitue_partout(x, l, t), i + 1)
+
+      case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
+        unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t, i + 1)
+
+      case _ => throw Error("Cannot unify")
