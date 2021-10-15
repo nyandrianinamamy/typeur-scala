@@ -17,7 +17,7 @@ def generate_equation(term: Term, t0: Type, env: Map[Var, Type]): List[Eq] =
       val t1 = TVar(Var.fresh_var())
       val t2 = TVar(Var.fresh_var())
       val `t1->t2` = Arrow(t1, t2)
-      Eq(t0, `t1->t2`) :: generate_equation(body, t2, env + (arg -> t1))
+      generate_equation(body, t2, env + (arg -> t1)) ::: Eq(t0, `t1->t2`) :: List()
 
     case App(term1, term2) =>
       val t1 = TVar(Var.fresh_var())

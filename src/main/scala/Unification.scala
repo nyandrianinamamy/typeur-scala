@@ -38,15 +38,22 @@ def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
  *
  * - Remove a -> b = c -> d and replace with a = c and b = d
  *
+ * If x is t0 and only t0 do not touch left side, replace only right side
+ *
  * @param eqs
  * @param i
  * @return
  */
 def unification_etape(eqs: List[Eq], i: Int): List[Eq] =
   eqs match
-    case Nil => List()
 
-    case h :: t => h match
+    case Nil => throw Error("No more equations in list")
+
+    case h :: t => h match // extract to independent function
+
+      // Found solution
+      case eq@Eq(l: TVar, r: Type) if l.equals(TVar.t0) =>
+        eq :: List()
 
       case Eq(l, r) if l.equals(r) =>
         unification_etape(t, i + 1)
