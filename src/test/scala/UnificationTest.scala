@@ -82,7 +82,7 @@ class UnificationTest:
     val l = eq :: eq1 :: neq :: List[Eq]()
 
     try {
-      unification_etape(l, 0)
+      unification_etape(l)
     } catch {
       case e: Error => assertEquals("No more equations in list", e.getMessage)
     }
@@ -103,7 +103,7 @@ class UnificationTest:
     assertFalse(occur_check(X, Td)) // X should not appear in Td
 
     try {
-      unification_etape(eqs, 0)
+      unification_etape(eqs)
     } catch {
       case e: Error => assertEquals("No more equations in list", e.getMessage)
     }
@@ -117,7 +117,7 @@ class UnificationTest:
     val eqs: List[Eq] = Eq(TX, `TX -> TX`) :: List()
 
     try {
-      unification_etape(eqs, 0)
+      unification_etape(eqs)
     } catch {
       case e: Error => assertEquals("Cannot unify", e.getMessage)
     }
@@ -128,5 +128,5 @@ class UnificationTest:
 
     val eqs: List[Eq] = Eq(TVar.t0, tx) :: List()
 
-    unification_etape(eqs, 0) match
+    unification_etape(eqs) match
       case l: List[Eq] => assertEquals(Eq(TVar.t0, tx) :: List(), l)

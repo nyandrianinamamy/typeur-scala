@@ -44,7 +44,7 @@ def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
  * @param i
  * @return
  */
-def unification_etape(eqs: List[Eq], i: Int): List[Eq] =
+def unification_etape(eqs: List[Eq]): List[Eq] =
   eqs match
 
     case Nil => throw Error("No more equations in list")
@@ -52,19 +52,19 @@ def unification_etape(eqs: List[Eq], i: Int): List[Eq] =
     case h :: t => h match // extract to independent function
 
       // Found solution
-      case eq@Eq(l: TVar, r: Type) if l.equals(TVar.t0) =>
+      case eq@Eq(TVar.t0, r: Type) =>
         eq :: List()
 
       case Eq(l, r) if l.equals(r) =>
-        unification_etape(t, i + 1)
+        unification_etape(t)
 
       case Eq(TVar(x), r) if !occur_check(x, r) =>
-        unification_etape(substitue_partout(x, r, t), i + 1)
+        unification_etape(substitue_partout(x, r, t))
 
       case Eq(l, TVar(x)) if !occur_check(x, l) =>
-        unification_etape(substitue_partout(x, l, t), i + 1)
+        unification_etape(substitue_partout(x, l, t))
 
       case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
-        unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t, i + 1)
+        unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
 
       case _ => throw Error("Cannot unify")
