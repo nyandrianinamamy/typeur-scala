@@ -30,19 +30,11 @@ def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   }
 
 /**
- * First step of unification
+ * Simple equation unifier.
  *
- * - Removes an eq if ltype = rtype
+ * Suppose t0 is always on the left side.
  *
- * - Remove X = Td and eqs[X/Td] if X not in Td
- *
- * - Remove a -> b = c -> d and replace with a = c and b = d
- *
- * If x is t0 and only t0 do not touch left side, replace only right side
- *
- * @param eqs
- * @param i
- * @return
+ * Suppose the equation containing t0 is always in the bottom of the list.
  */
 def unification_etape(eqs: List[Eq]): List[Eq] =
   eqs match
@@ -51,19 +43,22 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
 
     case h :: t => h match // extract to independent function
 
-      // Found solution
-      case eq@Eq(TVar.t0, r: Type) =>
+      case eq@Eq(TVar.t0, r: Type) if t.isEmpty =>
         eq :: List()
 
+      // Removes an eq if ltype = rtype
       case Eq(l, r) if l.equals(r) =>
         unification_etape(t)
 
+      // Remove X = Td and eqs[X/Td] if X not in Td
       case Eq(TVar(x), r) if !occur_check(x, r) =>
         unification_etape(substitue_partout(x, r, t))
 
+      // Remove Td = X and eqs[X/Td] if X not in Td
       case Eq(l, TVar(x)) if !occur_check(x, l) =>
         unification_etape(substitue_partout(x, l, t))
 
+      // Remove a -> b = c -> d and replace with a = c and b = d
       case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
         unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
 
