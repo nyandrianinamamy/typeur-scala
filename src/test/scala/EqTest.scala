@@ -48,7 +48,6 @@ class EqTest:
     val env: Map[Var, Type] = Map(x -> tx) // Suppose x is type tx
     generate_equation(`I x`, TVar.t0, env) match
       case l: List[Eq] =>
-        println(l)
         l foreach {
           case eq: Eq => assertTrue(expected exists (str => str == eq.toString()))
         }
