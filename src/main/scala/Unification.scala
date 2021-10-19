@@ -47,15 +47,15 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
         eq :: List()
 
       // Removes an eq if ltype = rtype
-      case Eq(l, r) if l.equals(r) =>
+      case Eq(l, r) if l equals r =>
         unification_etape(t)
 
       // Remove X = Td and eqs[X/Td] if X not in Td
-      case Eq(TVar(x), r) if !occur_check(x, r) =>
+      case Eq(TVar(x), r) if !(r contains x) =>
         unification_etape(substitue_partout(x, r, t))
 
       // Remove Td = X and eqs[X/Td] if X not in Td
-      case Eq(l, TVar(x)) if !occur_check(x, l) =>
+      case Eq(l, TVar(x)) if !(l contains x) =>
         unification_etape(substitue_partout(x, l, t))
 
       // Remove a -> b = c -> d and replace with a = c and b = d

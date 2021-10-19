@@ -1,4 +1,6 @@
-trait Type
+trait Type {
+  def contains(that: Var): Boolean = occur_check(that, this)
+}
 
 case class TVar(x: Var) extends Type :
   override def toString(): String =

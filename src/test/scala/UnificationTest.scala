@@ -7,7 +7,7 @@ class UnificationTest:
     val x = Var("x")
     val t = TVar(x)
 
-    assertTrue(occur_check(x, t))
+    assertTrue(t contains x)
 
   @Test def occurence_in_arrow(): Unit =
     val x = Var("x")
@@ -16,12 +16,12 @@ class UnificationTest:
     val ty = TVar(y)
     val `tx->ty` = Arrow(tx, ty)
 
-    assertTrue(occur_check(x, tx))
-    assertTrue(occur_check(y, ty))
-    assertFalse(occur_check(x, ty))
-    assertFalse(occur_check(y, tx))
-    assertTrue(occur_check(x, `tx->ty`))
-    assertTrue(occur_check(y, `tx->ty`))
+    assertTrue(tx contains x)
+    assertTrue(ty contains y)
+    assertFalse(ty contains x)
+    assertFalse(tx contains y)
+    assertTrue(`tx->ty` contains x)
+    assertTrue(`tx->ty` contains y)
 
   @Test def substitue_in_tvar(): Unit =
     val x = Var("x")

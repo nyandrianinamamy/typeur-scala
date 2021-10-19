@@ -1,8 +1,11 @@
-import org.junit.Test
+import org.junit.{Before, Test}
 import org.junit.Assert.*
-import Typeur._
+import Typeur.*
 
 class TypeurTest:
+  @Before def initialize(): Unit =
+    Var.last = 1
+
   @Test def `lambda xyz.(xz)(yz)`(): Unit =
     val x = Var("x")
     val y = Var("y")
