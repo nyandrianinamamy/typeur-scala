@@ -1,4 +1,5 @@
 import Typeur._
+import scala.language.postfixOps
 
 @main def hello: Unit =
   val x = Var("x")
@@ -7,5 +8,5 @@ import Typeur._
 
   val term = Abs(x, Abs(y, Abs(z, App(App(x, z), App(y, z)))))
 
-  println(typeur(term))
+  println(infer(term))
 

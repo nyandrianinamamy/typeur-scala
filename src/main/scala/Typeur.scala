@@ -1,5 +1,5 @@
 object Typeur {
-  def typeur(term: Term): String =
+  def infer(term: Term): String =
     val env: Map[Var, Type] = Map()
     val eqs = generate_equation(term, TVar.t0, env)
     try {

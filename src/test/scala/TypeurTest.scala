@@ -10,7 +10,7 @@ class TypeurTest:
 
     val term = Abs(x, Abs(y, Abs(z, App(App(x, z), App(y, z)))))
 
-    assertEquals("Typable avec le type ((x6 -> (x8 -> x7)) -> ((x6 -> x8) -> (x6 -> x7)))", typeur(term))
+    assertEquals("Typable avec le type ((x6 -> (x8 -> x7)) -> ((x6 -> x8) -> (x6 -> x7)))", infer(term))
 
 
   @Test def `lambda x.xx`(): Unit =
@@ -18,4 +18,4 @@ class TypeurTest:
 
     val term = Abs(x, App(x, x))
 
-    assertEquals("Non typable", typeur(term))
+    assertEquals("Non typable", infer(term))
