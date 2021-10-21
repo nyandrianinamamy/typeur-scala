@@ -128,3 +128,11 @@ class TermTest:
     val n = N(0)
 
     assertEquals("0", n.toString())
+
+  @Test def should_print_lst(): Unit =
+    val l = Lst(N(0), Lst(N(1), Lst(N(2), Nil())))
+
+    val n0 = l.head()
+
+    assertEquals(N(0), n0);
+    assertEquals(s"0,1,2,${Nil}", l.toString())

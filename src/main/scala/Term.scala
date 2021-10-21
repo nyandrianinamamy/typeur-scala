@@ -33,13 +33,23 @@ case class Abs(arg: Var, body: Term)
 case class N(i: Int) extends Term :
   override def toString: String = s"${i}"
 
-case class Add(a: Term, b: Term):
+case class Add(a: Term, b: Term) extends Term :
   override def toString: String =
     s"${a.toString()} + ${b.toString()}"
 
-case class Subs(a: Term, b: Term):
+case class Subs(a: Term, b: Term) extends Term :
   override def toString: String =
     s"${a.toString()} - ${b.toString()}"
+
+case class Nil() extends Term
+
+case class Lst(current: Term, next: Lst | Nil) extends Term :
+  override def toString: String = Lst(current, next) match
+    case Lst(_, _: Nil) => s"${current.toString},Nil"
+    case _ => s"${current.toString},${next.toString()}"
+
+  def head(): Term =
+    current
 
 /**
  * Contains last variable used for alpha conversion
