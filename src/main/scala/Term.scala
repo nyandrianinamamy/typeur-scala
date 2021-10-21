@@ -51,6 +51,11 @@ case class Lst(current: Term, next: Lst | Nil) extends Term :
   def head(): Term =
     current
 
+  def tail(): Term = this match {
+    case Lst(_, Nil()) => current
+    case Lst(_, nxt: Lst) => nxt.tail()
+  }
+
 /**
  * Contains last variable used for alpha conversion
  */
