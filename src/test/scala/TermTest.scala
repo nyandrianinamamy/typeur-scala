@@ -123,3 +123,8 @@ class TermTest:
       app.term2 match
         case Var(x) => x
     })", app_string)
+
+  @Test def should_print_nat(): Unit =
+    val n = N(0)
+
+    assertEquals("0", n.toString())

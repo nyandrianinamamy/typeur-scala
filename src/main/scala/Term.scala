@@ -30,6 +30,17 @@ case class App(term1: Term, term2: Term)
 case class Abs(arg: Var, body: Term)
   extends Term
 
+case class N(i: Int) extends Term :
+  override def toString: String = s"${i}"
+
+case class Add(a: Term, b: Term):
+  override def toString: String =
+    s"${a.toString()} + ${b.toString()}"
+
+case class Subs(a: Term, b: Term):
+  override def toString: String =
+    s"${a.toString()} - ${b.toString()}"
+
 /**
  * Contains last variable used for alpha conversion
  */

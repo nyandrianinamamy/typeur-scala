@@ -10,6 +10,10 @@ case class Arrow(arg: Type, res: Type) extends Type :
   override def toString(): String =
     s"(${arg.toString()} -> ${res.toString()})"
 
+case class Nat() extends Type :
+  override def toString: String =
+    "Nat"
+
 object TVar {
   val t0 = TVar(Var.`0`)
 }
