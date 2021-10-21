@@ -43,6 +43,10 @@ case class Subs(a: Term, b: Term) extends Term :
 
 case class Nil() extends Term
 
+/**
+ * Native List with ordered sequence of element
+ *
+ */
 case class Lst(current: Term, next: Lst | Nil) extends Term :
   override def toString: String = Lst(current, next) match
     case Lst(_, _: Nil) => s"${current.toString},Nil"
@@ -51,10 +55,9 @@ case class Lst(current: Term, next: Lst | Nil) extends Term :
   def head(): Term =
     current
 
-  def tail(): Term = this match {
+  def tail(): Term = this match
     case Lst(_, Nil()) => current
     case Lst(_, nxt: Lst) => nxt.tail()
-  }
 
 /**
  * Contains last variable used for alpha conversion
