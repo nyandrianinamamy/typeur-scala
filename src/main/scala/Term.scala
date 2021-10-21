@@ -41,22 +41,25 @@ case class Subs(a: Term, b: Term) extends Term :
   override def toString: String =
     s"${a.toString()} - ${b.toString()}"
 
-case class Nil() extends Term
+/**
+ * End Of List
+ */
+case class EOL() extends Term
 
 /**
  * Native List with ordered sequence of element
  *
  */
-case class Lst(current: Term, next: Lst | Nil) extends Term :
+case class Lst(current: Term, next: Lst | EOL) extends Term :
   override def toString: String = Lst(current, next) match
-    case Lst(_, _: Nil) => s"${current.toString},Nil"
+    case Lst(_, _: EOL) => s"${current.toString},EOL"
     case _ => s"${current.toString},${next.toString()}"
 
   def head(): Term =
     current
 
   def tail(): Term = this match
-    case Lst(_, Nil()) => current
+    case Lst(_, EOL()) => current
     case Lst(_, nxt: Lst) => nxt.tail()
 
 /**

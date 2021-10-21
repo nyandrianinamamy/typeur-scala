@@ -130,13 +130,13 @@ class TermTest:
     assertEquals("0", n.toString())
 
   @Test def should_print_lst(): Unit =
-    val l = Lst(N(0), Lst(N(1), Lst(N(2), Nil())))
+    val l = Lst(N(0), Lst(N(1), Lst(N(2), EOL())))
 
-    assertEquals(s"0,1,2,${Nil}", l.toString())
+    assertEquals(s"0,1,2,${EOL}", l.toString())
 
   @Test def should_compute_head_tail(): Unit =
-    val l = Lst(N(0), Lst(N(1), Lst(N(2), Nil())))
-    val singleItem = Lst(N(0), Nil())
+    val l = Lst(N(0), Lst(N(1), Lst(N(2), EOL())))
+    val singleItem = Lst(N(0), EOL())
 
     assertEquals(N(0), l.head());
     assertEquals(N(2), l.tail());
