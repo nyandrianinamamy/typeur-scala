@@ -28,3 +28,12 @@ class TypeTest:
   @Test def should_print_type_nat(): Unit =
     val t = N()
     assertEquals("N", t.toString())
+
+  @Test def should_print_type_list(): Unit =
+    val tx = TVar(Var("x"))
+    val tl = TLst(tx)
+    assertEquals("[x]", tl.toString)
+
+  @Test def should_print_type_empty_list(): Unit =
+    val tl = Empty()
+    assertEquals("[Nil]", tl.toString)
