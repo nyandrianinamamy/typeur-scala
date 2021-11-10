@@ -26,5 +26,5 @@ class TypeTest:
     assertFalse(sequal_type(txarrow, tyarrow))
 
   @Test def should_print_type_nat(): Unit =
-    val ti = Nat()
-    assertEquals("Nat", ti.toString())
+    val t = N()
+    assertEquals("N", t.toString())

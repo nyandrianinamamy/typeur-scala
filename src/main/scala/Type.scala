@@ -10,9 +10,26 @@ case class Arrow(arg: Type, res: Type) extends Type :
   override def toString(): String =
     s"(${arg.toString()} -> ${res.toString()})"
 
-case class Nat() extends Type :
+/**
+ * Natural number type
+ */
+case class N() extends Type :
   override def toString: String =
-    "Nat"
+    "N"
+
+/**
+ * List type
+ */
+case class TLst(T: Type) extends Type :
+  override def toString: String =
+    s"[${T.toString}]"
+
+/**
+ * Empty list type
+ */
+case class TNil() extends Type:
+  override def toString: String =
+    s"[${Nil()}]"
 
 /**
  * Type constructor forall X.T

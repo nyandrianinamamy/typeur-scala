@@ -2,12 +2,30 @@
  * If zero Then term1 Else term2
  *
  */
-class Izte(nat: N, term1: => Term, term2: => Term):
+case class Izte(nat: Nat, term1: Term, term2: Term):
   override def toString: String = s"If ${nat.toString} then ${term1.toString} else ${term2.toString}"
 
 /**
  * If empty Then term1 Else term2
  *
  */
-class Iete(lst: Lst, term1: => Term, term2: => Term):
+case class Iete(lst: Lst, term1: Term, term2: Term):
   override def toString: String = s"If ${lst.toString} then ${term1.toString} else ${term2.toString}"
+
+/**
+ * Fix point operator
+ */
+class Fix(phi: Term, M: Term):
+  override def toString: String = s"fix (${phi.toString}, ${M.toString})"
+
+/**
+ * Head operator
+ */
+case class Head(lst: Lst):
+  override def toString: String = s"head ${lst.toString}"
+
+/**
+ * Tail operator
+ */
+case class Tail(lst: Lst):
+  override def toString: String = s"tail ${lst.toString}"
