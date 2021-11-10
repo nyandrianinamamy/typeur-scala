@@ -33,14 +33,6 @@ case class Abs(arg: Var, body: Term) extends Term :
 case class Nat(i: Int) extends Term :
   override def toString: String = s"${i}"
 
-case class Add(a: Term, b: Term) extends Term :
-  override def toString: String =
-    s"${a.toString()} + ${b.toString()}"
-
-case class Diff(a: Term, b: Term) extends Term :
-  override def toString: String =
-    s"${a.toString()} - ${b.toString()}"
-
 trait Lst
 
 /**

@@ -29,3 +29,10 @@ case class Head(lst: Lst):
  */
 case class Tail(lst: Lst):
   override def toString: String = s"tail ${lst.toString}"
+
+/**
+ * Addition operator
+ */
+case class Add(a: Term, b: Term) extends Term:
+  override def toString: String =
+    s"${a.toString()} + ${b.toString()}"

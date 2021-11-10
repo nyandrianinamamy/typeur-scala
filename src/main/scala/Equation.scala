@@ -28,22 +28,16 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
       generate_equation(term1, `t1->t0`, env) ::: generate_equation(term2, t1, env)
 
-    case Add(a, b) =>
-      val ta = TVar(Var("a"))
-      val tb = TVar(Var("b"))
+    case Add(a, b)  =>
+      generate_equation(a, N(), env) match
+        case List(Eq(_, ta)) =>
 
-      generate_equation(a, ta, env) match {
-        case List(Eq(la, ra)) =>
-          generate_equation(b, tb, env) match {
-            case List(Eq(lb, rb)) =>
-              if (!ra.equals(rb))
-                throw Error("Type addition différent")
+          generate_equation(b, N(), env) match
+            case List(Eq(_, tb)) =>
+              val `ta->tb` = Arrow(ta, tb);
+              val `ta->tb->N` = Arrow(`ta->tb`, N())
 
-              val `ta->ta` = Arrow(ra, ra);
-              val `ta->ta->ta` = Arrow(ra, `ta->ta`)
-              Eq(t0, `ta->ta->ta`) :: List()
+              Eq(t0, `ta->tb->N`) :: List()
 
-            case _ => throw Error("Type addition différent")
-          }
-        case _ => throw Error("Type addition différent")
-      }
+            case _ => throw Error("Addition impossible")
+        case _ => throw Error("Addition impossible")
