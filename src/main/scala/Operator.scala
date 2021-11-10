@@ -21,13 +21,13 @@ class Fix(phi: Term, M: Term):
 /**
  * Head operator
  */
-case class Head(lst: Lst):
+case class Head(lst: Lst) extends Term:
   override def toString: String = s"head ${lst.toString}"
 
 /**
  * Tail operator
  */
-case class Tail(lst: Lst):
+case class Tail(lst: Lst) extends Term:
   override def toString: String = s"tail ${lst.toString}"
 
 /**

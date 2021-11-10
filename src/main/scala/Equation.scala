@@ -41,3 +41,8 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
             case _ => throw Error("Addition impossible")
         case _ => throw Error("Addition impossible")
+
+    case Head(lst) =>
+      var X = TVar(Var("X"))
+      Eq(t0, Forall(X, TLst(X))) :: List()
+
