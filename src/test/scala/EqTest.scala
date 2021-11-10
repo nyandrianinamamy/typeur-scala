@@ -57,4 +57,22 @@ class EqTest:
 
     val env: ENV = Map()
     generate_equation(x, TVar.t0, env) match
-      case h :: q => assertEquals(s"x0 = ${N}", h.toString())
+      case h :: q => assertEquals(s"x0 = $N", h.toString())
+
+  @Test def should_gen_eq_add_nat(): Unit =
+    val x = Nat(1)
+    val y = Nat(2)
+    val add = Add(x, y)
+
+    val env: ENV = Map()
+    generate_equation(add, TVar.t0, env) match
+      case h :: q => assertEquals(s"x0 = ($N -> ($N -> $N))", h.toString())
+
+  @Test def should_gen_eq_add_var(): Unit =
+    val y = Nat(1)
+    val x = Var("x")
+    val add = Add(x, y)
+
+    val env: ENV = Map(x -> N())
+    generate_equation(add, TVar.t0, env) match
+      case h :: q => assertEquals(s"x0 = ($N -> ($N -> $N))", h.toString())
