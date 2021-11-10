@@ -4,7 +4,7 @@ case class Eq(ltype: Type, rtype: Type):
   override def toString(): String =
     s"${ltype.toString()} = ${rtype.toString()}"
 
-def generate_equation(term: Term, t0: Type, env: Map[Var, Type]): List[Eq] =
+def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
   term match
     case x: Var =>
       env get x match {
@@ -12,6 +12,9 @@ def generate_equation(term: Term, t0: Type, env: Map[Var, Type]): List[Eq] =
         case None =>
           throw NoSuchElementException(s"Var $x not found in environment")
       }
+
+    case n: Nat =>
+      Eq(t0, N()) :: List()
 
     case Abs(arg, body) =>
       val t1 = TVar(Var.fresh_var())
