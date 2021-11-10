@@ -44,5 +44,16 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
     case Head(lst) =>
       var X = TVar(Var("X"))
-      Eq(t0, Forall(X, TLst(X))) :: List()
+      var `[X]` = TLst(X)
+      var `∀X.[X]` = Forall(X, `[X]`)
+      var `∀X.[X]->X` = Arrow(`∀X.[X]`, X)
 
+      Eq(t0, `∀X.[X]->X`) :: List()
+
+    case Tail(lst) =>
+      var X = TVar(Var("X"))
+      var `[X]` = TLst(X)
+      var `∀X.[X]` = Forall(X, `[X]`)
+      var `∀X.[X] -> ∀X.[X]` = Arrow(`∀X.[X]`, `∀X.[X]`)
+
+      Eq(t0, `∀X.[X] -> ∀X.[X]`) :: List()
