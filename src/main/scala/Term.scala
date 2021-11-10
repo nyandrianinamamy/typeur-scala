@@ -28,32 +28,38 @@ case class App(term1: Term, term2: Term) extends Term :
  * @param body M
  */
 case class Abs(arg: Var, body: Term) extends Term :
-  override def toString: String = s"λ${arg.toString}.${body.toString}"
+  override def toString: String = s"fun (${arg.toString}) -> ${body.toString}"
 
-case class N(i: Int) extends Term :
+case class Nat(i: Int) extends Term :
   override def toString: String = s"${i}"
 
-/**
- * End Of List
- */
-case class EOL() extends Term
+case class Add(a: Term, b: Term) extends Term :
+  override def toString: String =
+    s"${a.toString()} + ${b.toString()}"
+
+case class Diff(a: Term, b: Term) extends Term :
+  override def toString: String =
+    s"${a.toString()} - ${b.toString()}"
+
+trait Lst
 
 /**
- * Native List with ordered sequence of element
+ * Empty list
+ */
+case class Nil() extends Lst :
+  override def toString: String = "Nil"
+
+/**
+ * List constructor
+ */
+case class Cons(t: Term, list: Lst) extends Lst :
+  override def toString: String = this match
+    case Cons(t, l) => s"(${t.toString},${l.toString})"
+
+/**
+ * let x = t1 in t2
  *
  */
-case class Lst(current: Term, next: Lst | EOL) extends Term :
-  override def toString: String = Lst(current, next) match
-    case Lst(_, _: EOL) => s"${current.toString},EOL"
-    case _ => s"${current.toString},${next.toString()}"
-
-  def head(): Term =
-    current
-
-  def tail(): Term = this match
-    case Lst(_, EOL()) => current
-    case Lst(_, nxt: Lst) => nxt.tail()
-
 case class Letin(x: Var, t1: Term, t2: Term) extends Term :
   override def toString: String = s"let ${x.toString} = (${t1.toString}) in (${t2.toString})"
 

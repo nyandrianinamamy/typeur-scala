@@ -125,28 +125,19 @@ class TermTest:
     })", app_string)
 
   @Test def should_print_nat(): Unit =
-    val n = N(0)
+    val n = Nat(0)
 
     assertEquals("0", n.toString())
 
   @Test def should_print_lst(): Unit =
-    val l = Lst(N(0), Lst(N(1), Lst(N(2), EOL())))
+    val l = Cons(Nat(0), Cons(Nat(1), Nil()))
 
-    assertEquals(s"0,1,2,${EOL}", l.toString())
-
-  @Test def should_compute_head_tail(): Unit =
-    val l = Lst(N(0), Lst(N(1), Lst(N(2), EOL())))
-    val singleItem = Lst(N(0), EOL())
-
-    assertEquals(N(0), l.head());
-    assertEquals(N(2), l.tail());
-    assertEquals(N(0), singleItem.head())
-    assertEquals(N(0), singleItem.tail())
+    assertEquals(s"(0,(1,Nil))", l.toString)
 
   @Test def should_print_let_poly(): Unit =
     val x = Var("x")
-    val one = N(1)
-    val two = N(2)
+    val one = Nat(1)
+    val two = Nat(2)
     val t1 = Add(x, one);
 
     val let = Letin(x, two, t1);
