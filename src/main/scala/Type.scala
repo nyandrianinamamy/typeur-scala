@@ -14,6 +14,12 @@ case class Nat() extends Type :
   override def toString: String =
     "Nat"
 
+/**
+ * Type constructor forall X.T
+ */
+case class Forall(X: TVar, T: Type) extends Type:
+  override def toString: String = s"forall ${X.toString}.${T.toString}"
+
 object TVar {
   val t0 = TVar(Var.`0`)
 }

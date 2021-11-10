@@ -142,3 +142,13 @@ class TermTest:
     assertEquals(N(2), l.tail());
     assertEquals(N(0), singleItem.head())
     assertEquals(N(0), singleItem.tail())
+
+  @Test def should_print_let_poly(): Unit =
+    val x = Var("x")
+    val one = N(1)
+    val two = N(2)
+    val t1 = Add(x, one);
+
+    val let = Letin(x, two, t1);
+
+    assertEquals("let x = (2) in (x + 1)", let.toString)

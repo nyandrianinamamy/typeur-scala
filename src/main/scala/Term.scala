@@ -9,8 +9,8 @@ trait Term
  *
  * @param name x
  */
-case class Var(name: String)
-  extends Term
+case class Var(name: String) extends Term :
+  override def toString: String = name
 
 /**
  * Application M N
@@ -18,8 +18,8 @@ case class Var(name: String)
  * @param term1 M
  * @param term2 N
  */
-case class App(term1: Term, term2: Term)
-  extends Term
+case class App(term1: Term, term2: Term) extends Term :
+  override def toString: String = s"(${term1.toString} ${term2.toString})"
 
 /**
  * Abstraction lambda x.M
@@ -27,19 +27,11 @@ case class App(term1: Term, term2: Term)
  * @param arg  x
  * @param body M
  */
-case class Abs(arg: Var, body: Term)
-  extends Term
+case class Abs(arg: Var, body: Term) extends Term :
+  override def toString: String = s"λ${arg.toString}.${body.toString}"
 
 case class N(i: Int) extends Term :
   override def toString: String = s"${i}"
-
-case class Add(a: Term, b: Term) extends Term :
-  override def toString: String =
-    s"${a.toString()} + ${b.toString()}"
-
-case class Subs(a: Term, b: Term) extends Term :
-  override def toString: String =
-    s"${a.toString()} - ${b.toString()}"
 
 /**
  * End Of List
@@ -61,6 +53,9 @@ case class Lst(current: Term, next: Lst | EOL) extends Term :
   def tail(): Term = this match
     case Lst(_, EOL()) => current
     case Lst(_, nxt: Lst) => nxt.tail()
+
+case class Letin(x: Var, t1: Term, t2: Term) extends Term :
+  override def toString: String = s"let ${x.toString} = (${t1.toString}) in (${t2.toString})"
 
 /**
  * Contains last variable used for alpha conversion
