@@ -130,3 +130,13 @@ class UnificationTest:
 
     unification_etape(eqs) match
       case l: List[Eq] => assertEquals(Eq(TVar.t0, tx) :: List(), l)
+
+  @Test def unify_forall(): Unit =
+    val X = Var("X")
+    val tx = TVar(X)
+    val t = TVar(Var("t"))
+    val forall = Forall(TVar(X), TVar(X))
+
+    val eqs: List[Eq] =  Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
+
+    assertEquals("List(x0 = X)", unification_etape(eqs).toString)
