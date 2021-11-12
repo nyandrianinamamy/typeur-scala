@@ -30,8 +30,7 @@ case class TLst(T: Type) extends Type :
  * Empty list type
  */
 case class Empty() extends Type:
-  override def toString: String =
-    s"[Nil]"
+  override def toString: String = "[Nil]"
 
 /**
  * Type constructor forall X.T

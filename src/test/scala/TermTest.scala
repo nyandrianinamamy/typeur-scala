@@ -130,7 +130,7 @@ class TermTest:
     assertEquals("0", n.toString())
 
   @Test def should_print_lst(): Unit =
-    val l = Cons(Nat(0), Cons(Nat(1), Empty()))
+    val l = Cons(Nat(0), Cons(Nat(1), EOL()))
 
     assertEquals(s"(0,(1,Nil))", l.toString)
 

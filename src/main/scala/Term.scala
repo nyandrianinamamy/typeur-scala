@@ -36,9 +36,9 @@ case class Nat(i: Int) extends Term :
 trait Lst
 
 /**
- * Empty list
+ * End of list
  */
-case class Empty() extends Lst :
+case class EOL() extends Lst :
   override def toString: String = "Nil"
 
 /**
