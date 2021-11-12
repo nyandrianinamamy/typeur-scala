@@ -70,6 +70,10 @@ def alpha_conversion_type(t: Type): Type =
       var new_tvar: TVar = remp get res getOrElse TVar.fresh_tvar()
       Arrow(barendregt(arg, remp + (res -> new_tvar)), new_tvar)
 
+    case Forall(a, f) =>
+      var new_tvar = remp get a getOrElse TVar.fresh_tvar()
+      Forall(new_tvar, barendregt(f, remp + (a -> new_tvar)))
+
     case _ => throw Error("Barendregt failed")
 
   barendregt(t, Map())

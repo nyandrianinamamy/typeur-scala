@@ -7,15 +7,16 @@ case class Eq(ltype: Type, rtype: Type):
 
 def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
   term match
+
+    case n: Nat =>
+      Eq(t0, N()) :: List()
+
     case x: Var =>
       env get x match {
         case Some(a) => Eq(t0, a) :: List()
         case None =>
           throw NoSuchElementException(s"Var $x not found in environment")
       }
-
-    case n: Nat =>
-      Eq(t0, N()) :: List()
 
     case Abs(arg, body) =>
       val t1 = TVar(Var.fresh_var())
@@ -27,7 +28,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val t1 = TVar(Var.fresh_var())
       val `t1->t0` = Arrow(t1, t0)
 
-      generate_equation(term1, `t1->t0`, env) ::: generate_equation(term2, t1, env)
+      generate_equation(term2, t1, env) ::: generate_equation(term1, `t1->t0`, env)
 
     case Add(a, b) =>
       generate_equation(a, N(), env) match

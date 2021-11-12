@@ -9,6 +9,8 @@ def occur_check(x: Var, t: Type): Boolean =
   t match
     case TVar(y) => x.equals(y)
     case Arrow(arg, res) => occur_check(x, arg) || occur_check(x, res)
+    case Forall(a, b) => occur_check(x, a) || occur_check(x, b)
+    case n: N => false
 
 /**
  * Substitute type t with type s for all occurrences of var x in type t
@@ -23,6 +25,8 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
+    case Forall(a, b) => substitue(x, s, a) match
+      case tv: TVar => Forall(tv, substitue(x, s, b))
 
 def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   eqs map {
@@ -49,6 +53,17 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       // Removes an eq if ltype = rtype
       case Eq(l, r) if l equals r =>
         unification_etape(t)
+
+      case Eq(l, Forall(a, b)) =>
+        def open_forall(f: Type): Type =
+          f match
+            case Forall(c: TVar, d: Forall) => open_forall(d)
+            case Forall(c: TVar, d: Type) => d
+            case _ => throw new Error("Not type Forall")
+
+        val act = alpha_conversion_type(Forall(a, b))
+        val opened = open_forall(act)
+        unification_etape(Eq(l, opened) :: t)
 
       // Remove X = Td and eqs[X/Td] if X not in Td
       case Eq(TVar(x), r) if !(r contains x) =>

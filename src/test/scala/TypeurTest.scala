@@ -25,3 +25,13 @@ class TypeurTest:
     catch
       case e: Error => assertEquals("Non typable", e.getMessage())
 
+  @Test def `let f = (lambda x.x) in (f 1)`(): Unit =
+    val x = Var("x")
+    val f = Var("f")
+    val `1` = Nat(1)
+    val app = App(f, `1`)
+    val abs = Abs(x, x)
+
+    val term = Letin(f, abs, app)
+
+    assertEquals("N", infer(term).toString)
