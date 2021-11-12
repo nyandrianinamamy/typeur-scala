@@ -13,12 +13,15 @@ class TypeurTest:
 
     val term = Abs(x, Abs(y, Abs(z, App(App(x, z), App(y, z)))))
 
-    assertEquals("Typable avec le type ((x6 -> (x8 -> x7)) -> ((x6 -> x8) -> (x6 -> x7)))", infer(term))
+    assertEquals("((x6 -> (x8 -> x7)) -> ((x6 -> x8) -> (x6 -> x7)))", infer(term).toString)
 
 
   @Test def `lambda x.xx`(): Unit =
     val x = Var("x")
-
     val term = Abs(x, App(x, x))
 
-    assertEquals("Non typable", infer(term))
+    try
+      infer(term)
+    catch
+      case e: Error => assertEquals("Non typable", e.getMessage())
+
