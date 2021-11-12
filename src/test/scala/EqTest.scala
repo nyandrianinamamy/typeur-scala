@@ -103,16 +103,14 @@ class EqTest:
     generate_equation(let, TVar.t0, env) match
       case h :: q => assertEquals(s"x0 = ((N -> N) -> N)", h.toString)
 
-  @Test def should_gen_eq_let_abs(): Unit =
-    val n = Nat(1)
-    val f = Var("f")
+
+  @Test def should_gen_eq_let(): Unit =
     val x = Var("x")
-    val y = Var("y")
-    val ty = TVar(Var("free_y"))
+    val f = Var("f")
+    val `1` = Nat(1)
+    val app = App(f, `1`)
+    val abs = Abs(x, x)
 
-    val `l x.y` = Abs(x, y)
-    val t2 = App(f, n)
-    val let = Letin(f, `l x.y`, t2)
-
-    val env: ENV = Map(y -> ty)
-    assertEquals("List((x4 -> x0) = forall free_y.(x2 -> free_y), x4 = N)", generate_equation(let, TVar.t0, env).toString())
+    val let = Letin(f, abs, app)
+    val env: ENV = Map()
+    assertEquals("List((x4 -> x0) = forall x2.(x2 -> x2), x4 = N)", generate_equation(let, TVar.t0, env).toString)
