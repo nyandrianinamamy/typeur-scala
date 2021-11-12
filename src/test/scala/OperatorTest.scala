@@ -16,7 +16,7 @@ class OperatorTest:
   @Test def should_print_iete(): Unit =
     val x = Var("x")
     val y = Var("y")
-    val lst = Nil()
+    val lst = Empty()
     val term1 = Abs(x, x)
     val term2 = Abs(y, y)
 

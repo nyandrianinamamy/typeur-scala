@@ -38,7 +38,7 @@ trait Lst
 /**
  * Empty list
  */
-case class Nil() extends Lst :
+case class Empty() extends Lst :
   override def toString: String = "Nil"
 
 /**
