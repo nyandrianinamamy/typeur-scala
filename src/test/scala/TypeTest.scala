@@ -44,3 +44,13 @@ class TypeTest:
     val f = Forall(X, T)
 
     assertEquals("forall X.(X -> X)", f.toString)
+
+  @Test def should_alpha_convert_type(): Unit =
+    val X = TVar(Var("X"))
+    val T = Arrow(X, X)
+    val lt = Arrow(Arrow(X, X), X)
+    val rt = Arrow(X, Arrow(X, X))
+
+    assertEquals(alpha_conversion_type(T).toString, "(x1 -> x1)")
+    println(alpha_conversion_type(lt))
+    println(alpha_conversion_type(rt))
