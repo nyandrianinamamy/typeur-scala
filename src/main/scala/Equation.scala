@@ -1,4 +1,5 @@
 import java.util.NoSuchElementException
+import Typeur._
 
 case class Eq(ltype: Type, rtype: Type):
   override def toString(): String =
@@ -28,7 +29,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
       generate_equation(term1, `t1->t0`, env) ::: generate_equation(term2, t1, env)
 
-    case Add(a, b)  =>
+    case Add(a, b) =>
       generate_equation(a, N(), env) match
         case List(Eq(_, ta)) =>
 
@@ -57,3 +58,27 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       var `∀X.[X] -> ∀X.[X]` = Arrow(`∀X.[X]`, `∀X.[X]`)
 
       Eq(t0, `∀X.[X] -> ∀X.[X]`) :: List()
+
+    case Letin(x, e1, e2) =>
+      val t1 = infer(e1, env)
+      val tx = generalise(env, t1)
+      generate_equation(e2, t0, env + (x -> tx))
+
+/**
+ * Generalize a type with all free vars not in env
+ * ∀x1...xk.t
+ */
+def generalise(env: ENV, t: Type): Type =
+  t match {
+    case tv@TVar(x) =>
+      if (!env.contains(x))
+        Forall(tv, t)
+      else
+        t
+
+    case Arrow(arg, res) =>
+      Arrow(generalise(env, arg), generalise(env, res));
+
+    case n: N => N()
+
+  }
