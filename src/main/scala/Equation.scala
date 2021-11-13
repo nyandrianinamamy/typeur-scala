@@ -47,11 +47,21 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
     case Head(lst) =>
       val x = Var("x")
-      val TX = TVar(x)
-      val `[TX]` = TLst(TX)
-      val `[TX] -> X` = Arrow(`[TX]`, TX)
-      val `Forall X.[TX] -> X` = Forall(TX, `[TX] -> X`)
-      generate_equation(lst, TX, env + (x -> `Forall X.[TX] -> X`)) ::: Eq(t0, TX) :: List()
+      val X = TVar(x)
+      val `[X]` = TLst(X)
+      val `[X] -> X` = Arrow(`[X]`, X)
+      val `Forall X.[X] -> X` = Forall(X, `[X] -> X`)
+      generate_equation(lst, X, env + (x -> `Forall X.[X] -> X`)) ::: Eq(t0, X) :: List()
+
+
+    case Tail(lst) =>
+      val x = Var("x")
+      val X = TVar(x)
+      val `[X]` = TLst(X)
+      val `[X] -> [X]` = Arrow(`[X]`, `[X]`)
+      val `Forall X.[X] -> [X]` = Forall(X, `[X] -> [X]`)
+      generate_equation(lst, X, env + (x -> `Forall X.[X] -> [X]`)) ::: Eq(t0, `[X]`) :: List()
+
 
     case Letin(x, e1, e2) =>
       val t1 = infer(e1, env)

@@ -87,8 +87,7 @@ class EqTest:
     val t = Tail(lst)
 
     val env: ENV = Map()
-    generate_equation(t, TVar.t0, env) match
-      case h :: q => assertEquals(s"x0 = [N]", h.toString)
+    assertEquals("List(x = N, [x] = [x], x = N, x = [x], x0 = [x])", generate_equation(t, TVar.t0, env).toString)
 
   @Test def should_gen_eq_let_add(): Unit =
     val x = Var("x")
