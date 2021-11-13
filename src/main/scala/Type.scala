@@ -61,6 +61,9 @@ def alpha_conversion_type(t: Type): Type =
     case TVar(x) =>
       remp get TVar(x) getOrElse TVar(x)
 
+    case TLst(x) =>
+      TLst(barendregt(x, remp))
+
     case Arrow(arg: TVar, res) =>
       var new_tvar: TVar = remp get arg getOrElse TVar.fresh_tvar()
       Arrow(new_tvar, barendregt(res, remp + (arg -> new_tvar)))

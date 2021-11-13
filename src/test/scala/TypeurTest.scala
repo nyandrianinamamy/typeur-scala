@@ -5,6 +5,7 @@ import Typeur.*
 class TypeurTest:
   @Before def initialize(): Unit =
     Var.last = 1
+    TVar.last  = 1
 
   @Test def `lambda xyz.(xz)(yz)`(): Unit =
     val x = Var("x")
@@ -85,8 +86,9 @@ class TypeurTest:
     try {
       infer(lst)
     } catch {
-      case e: Error => assertEquals("Empty list not typable", e.getMessage())
+      case e: Error => assertEquals("Non typable", e.getMessage())
     }
+
 
   @Test def `[1, Nil]: [N]`: Unit =
     val lst = Cons(Nat(1), EOL())
@@ -100,12 +102,12 @@ class TypeurTest:
     val env: ENV = Map()
     assertEquals("[N]", infer(lst).toString)
 
-  @Test def `[lambda x.x, lambda x.x, Nil]: [N]`: Unit =
+  @Test def `[lambda x.x, lambda x.x, Nil]: [(x4 -> x4)]`: Unit =
     val abs = Abs(Var("x"), Var("x"))
     val lst = Cons(abs, Cons(abs, EOL()))
 
     val env: ENV = Map()
-    assertEquals("[N]", infer(lst).toString)
+    assertEquals("[(x4 -> x4)]", infer(lst).toString)
 
   @Test def `1 op 1: N`: Unit =
     val add = Add(Nat(1), Nat(1))

@@ -37,33 +37,21 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       generate_equation(t1, N(), env) ::: generate_equation(t2, N(), env) ::: Eq(t0, N()) :: List()
 
     case lst: EOL =>
-      throw Error("Empty list not typable")
+      List()
 
-    // List of all terms
-    // Check if all terms have the same type
     case cons@Cons(term: Term, lst: Lst) =>
-      val t1 = infer(term, env)
-      cons match {
-        case Cons(_, EOL()) => Eq(t0, TLst(t1)) :: List()
-        case Cons(t, lst: Lst) =>
-          val t2 = infer(t, env)
-          if (!t2.equals(t1))
-          then
-            throw Error(s"Term of type ${t1} expected, but ${t2} given")
-          generate_equation(lst, t0, env)
-        case null => throw Error("List term not supported")
-      }
+      val x = Var("x")
+      val X = TVar(x)
+      val tlst = TLst(X)
+      generate_equation(lst, tlst, env) ::: generate_equation(term, X, env) ::: Eq(t0, tlst) :: List()
 
     case Head(lst) =>
-      val tlst = infer(lst, env)
-      tlst match
-        case TLst(t) => Eq(t0, t) :: List()
-        case _ => throw Error("Term given to Head has invalid type")
-
-    case Tail(lst) =>
-      lst match {
-        case Cons(_, list) => generate_equation(list, t0, env)
-      }
+      val x = Var("x")
+      val TX = TVar(x)
+      val `[TX]` = TLst(TX)
+      val `[TX] -> X` = Arrow(`[TX]`, TX)
+      val `Forall X.[TX] -> X` = Forall(TX, `[TX] -> X`)
+      generate_equation(lst, TX, env + (x -> `Forall X.[TX] -> X`)) ::: Eq(t0, TX) :: List()
 
     case Letin(x, e1, e2) =>
       val t1 = infer(e1, env)
@@ -88,5 +76,6 @@ def getFreeVar(t: Type, env: ENV): List[TVar] =
       then tv :: List()
       else List()
     case Arrow(tl, tr) => getFreeVar(tl, env)
+    case TLst(t) => getFreeVar(t, env)
 
 

@@ -23,6 +23,7 @@ def occur_check(x: Var, t: Type): Boolean =
 def substitue(x: Var, s: Type, t: Type): Type =
   t match
     case n: N => n
+    case TLst(y) => TLst(substitue(x, s, y))
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
@@ -85,5 +86,12 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       // Remove a -> b = c -> d and replace with a = c and b = d
       case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
         unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
+
+      case Eq(TLst(x), r) =>
+        unification_etape(Eq(x, r) :: t)
+
+      case Eq(l, TLst(x)) =>
+        unification_etape(Eq(l, x) :: t)
+
 
       case _ => throw Error("Cannot unify")

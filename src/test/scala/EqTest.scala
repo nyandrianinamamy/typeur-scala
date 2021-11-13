@@ -65,8 +65,7 @@ class EqTest:
     val add = Add(x, y)
 
     val env: ENV = Map()
-    generate_equation(add, TVar.t0, env) match
-      case h :: q => assertEquals(s"x0 = (($N -> $N) -> $N)", h.toString)
+    assertEquals("List(N = N, N = N, x0 = N)", generate_equation(add, TVar.t0, env).toString)
 
   @Test def should_gen_eq_add_var(): Unit =
     val y = Nat(1)
@@ -74,16 +73,14 @@ class EqTest:
     val add = Add(x, y)
 
     val env: ENV = Map(x -> N())
-    generate_equation(add, TVar.t0, env) match
-      case h :: q => assertEquals(s"x0 = (($N -> $N) -> $N)", h.toString)
+    assertEquals("List(N = N, N = N, x0 = N)", generate_equation(add, TVar.t0, env).toString)
 
   @Test def should_gen_eq_head(): Unit =
     val lst = Cons(Nat(0), EOL())
     val hd = Head(lst)
 
     val env: ENV = Map()
-    generate_equation(hd, TVar.t0, env) match
-      case h :: q => assertEquals(s"x0 = N", h.toString)
+    assertEquals("List(x = N, x = [x], x0 = x)", generate_equation(hd, TVar.t0, env).toString)
 
   @Test def should_gen_eq_tail(): Unit =
     val lst = Cons(Nat(0), Cons(Nat(1), EOL()))
@@ -100,8 +97,7 @@ class EqTest:
     val let = Letin(x, t1, t2)
 
     val env: ENV = Map()
-    generate_equation(let, TVar.t0, env) match
-      case h :: q => assertEquals(s"x0 = ((N -> N) -> N)", h.toString)
+    assertEquals("List(N = N, N = N, x0 = N)", generate_equation(let, TVar.t0, env).toString)
 
 
   @Test def should_gen_eq_let(): Unit =
