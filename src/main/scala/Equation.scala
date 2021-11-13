@@ -56,7 +56,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
           val t2 = infer(t, env)
           if (!t2.equals(t1))
           then
-            throw Error("List terms do not have the same type")
+            throw Error(s"Term of type ${t1} expected, but ${t2} given")
           generate_equation(lst, t0, env)
         case null => throw Error("List term not supported")
       }
@@ -68,12 +68,9 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
         case _ => throw Error("Term given to Head has invalid type")
 
     case Tail(lst) =>
-      var X = TVar(Var("X"))
-      var `[X]` = TLst(X)
-      var `∀X.[X]` = Forall(X, `[X]`)
-      var `∀X.[X] -> ∀X.[X]` = Arrow(`∀X.[X]`, `∀X.[X]`)
-
-      Eq(t0, `∀X.[X] -> ∀X.[X]`) :: List()
+      lst match {
+        case Cons(_, list) => generate_equation(list, t0, env)
+      }
 
     case Letin(x, e1, e2) =>
       val t1 = infer(e1, env)
