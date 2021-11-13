@@ -99,3 +99,17 @@ class TypeurTest:
 
     val env: ENV = Map()
     assertEquals("[N]", infer(lst).toString)
+
+  @Test def `[lambda x.x, lambda x.x, Nil]: [N]`: Unit =
+    val abs = Abs(Var("x"), Var("x"))
+    val lst = Cons(abs, Cons(abs, EOL()))
+
+    val env: ENV = Map()
+    assertEquals("[N]", infer(lst).toString)
+
+  @Test def `1 op 1: N`: Unit =
+    val add = Add(Nat(1), Nat(1))
+    val diff = Diff(Nat(1), Nat(1))
+
+    assertEquals("N", infer(add).toString);
+    assertEquals("N", infer(diff).toString);

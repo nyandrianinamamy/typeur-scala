@@ -30,21 +30,14 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
       generate_equation(term2, t1, env) ::: generate_equation(term1, `t1->t0`, env)
 
-    case Add(a, b) =>
-      generate_equation(a, N(), env) match
-        case List(Eq(_, ta)) =>
+    case Add(t1, t2) =>
+       generate_equation(t1, N(), env) ::: generate_equation(t2, N(), env) ::: Eq(t0, N()) :: List()
 
-          generate_equation(b, N(), env) match
-            case List(Eq(_, tb)) =>
-              val `ta->tb` = Arrow(ta, tb);
-              val `ta->tb->N` = Arrow(`ta->tb`, N())
+    case Diff(t1, t2) =>
+      generate_equation(t1, N(), env) ::: generate_equation(t2, N(), env) ::: Eq(t0, N()) :: List()
 
-              Eq(t0, `ta->tb->N`) :: List()
-
-            case _ => throw Error("Addition impossible")
-        case _ => throw Error("Addition impossible")
-
-    case lst: EOL => throw Error("Empty list not typable")
+    case lst: EOL =>
+      throw Error("Empty list not typable")
 
     // List of all terms
     // Check if all terms have the same type

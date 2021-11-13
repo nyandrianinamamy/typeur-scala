@@ -36,3 +36,11 @@ case class Tail(lst: Lst) extends Term:
 case class Add(a: Term, b: Term) extends Term:
   override def toString: String =
     s"${a.toString()} + ${b.toString()}"
+
+
+/**
+ * Substraction operator
+ */
+case class Diff(a: Term, b: Term) extends Term:
+  override def toString: String =
+    s"${a.toString()} - ${b.toString()}"
