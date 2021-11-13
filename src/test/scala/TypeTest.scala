@@ -4,6 +4,7 @@ import org.junit.Assert.*
 class TypeTest:
   @Before def initialize(): Unit =
     Var.last = 1
+    TVar.last = 1
 
   @Test def should_type_to_string(): Unit =
     val x = Var("x")
@@ -54,6 +55,6 @@ class TypeTest:
     val lt = Arrow(Arrow(X, X), X)
     val rt = Arrow(X, Arrow(X, X))
 
-    assertEquals(alpha_conversion_type(T).toString, "(x1 -> x1)")
-    assertEquals(alpha_conversion_type(lt).toString, "((x1 -> x1) -> x1)")
-    assertEquals(alpha_conversion_type(rt).toString, "(x1 -> (x1 -> x1))")
+    assertEquals(alpha_conversion_type(T).toString, "(t2 -> t2)")
+    assertEquals(alpha_conversion_type(lt).toString, "((t3 -> t3) -> t3)")
+    assertEquals(alpha_conversion_type(rt).toString, "(t4 -> (t4 -> t4))")

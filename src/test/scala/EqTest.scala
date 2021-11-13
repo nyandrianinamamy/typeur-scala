@@ -113,4 +113,4 @@ class EqTest:
 
     val let = Letin(f, abs, app)
     val env: ENV = Map()
-    assertEquals("List((x4 -> x0) = forall x2.(x2 -> x2), x4 = N)", generate_equation(let, TVar.t0, env).toString)
+    assertEquals("List(x4 = N, (x4 -> x0) = forall x2.(x2 -> x2))", generate_equation(let, TVar.t0, env).toString)
