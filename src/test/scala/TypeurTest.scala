@@ -56,3 +56,39 @@ class TypeurTest:
     val env: ENV = Map(t -> T)
 
     assertEquals("N", infer(`let f`, env).toString)
+
+  @Test def `Head [Nil]: Not typable`: Unit =
+    val head = Head(EOL())
+
+    try {
+      infer(head)
+    } catch {
+      case e: Error => assertEquals("Empty list not typable", e.getMessage())
+    }
+
+  @Test def `Head [1, Nil]: N`: Unit =
+    val lst = Cons(Nat(1), EOL())
+    val head = Head(lst)
+
+    assertEquals("N", infer(head).toString)
+
+  @Test def `Nil: Not typable`: Unit =
+    val lst = EOL()
+
+    try {
+      infer(lst)
+    } catch {
+      case e: Error => assertEquals("Empty list not typable", e.getMessage())
+    }
+
+  @Test def `[1, Nil]: [N]`: Unit =
+    val lst = Cons(Nat(1), EOL())
+
+    val env: ENV = Map()
+    assertEquals("[N]", infer(lst).toString)
+
+  @Test def `[1, 2, Nil]: [N]`: Unit =
+    val lst = Cons(Nat(1), Cons(Nat(2), EOL()))
+
+    val env: ENV = Map()
+    assertEquals("[N]", infer(lst).toString)

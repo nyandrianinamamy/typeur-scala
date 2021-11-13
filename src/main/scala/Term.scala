@@ -33,7 +33,7 @@ case class Abs(arg: Var, body: Term) extends Term :
 case class Nat(i: Int) extends Term :
   override def toString: String = s"${i}"
 
-trait Lst
+trait Lst extends Term
 
 /**
  * End of list

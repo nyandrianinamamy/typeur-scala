@@ -38,10 +38,6 @@ class TypeTest:
     val tl = TLst(tx)
     assertEquals("[x]", tl.toString)
 
-  @Test def should_print_type_empty_list(): Unit =
-    val tl = Empty()
-    assertEquals("[Nil]", tl.toString)
-
   @Test def should_print_type_forall(): Unit =
     val X = TVar(Var("X"))
     val T = Arrow(X, X)

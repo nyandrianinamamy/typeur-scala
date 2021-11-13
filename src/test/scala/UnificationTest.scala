@@ -141,3 +141,4 @@ class UnificationTest:
     val eqs: List[Eq] = Eq(forall, s) ::  Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
 
     assertEquals("List(x0 = X)", unification_etape(eqs).toString)
+    

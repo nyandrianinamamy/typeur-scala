@@ -29,12 +29,6 @@ case class TLst(T: Type) extends Type :
     s"[${T.toString}]"
 
 /**
- * Empty list type
- */
-case class Empty() extends Type:
-  override def toString: String = "[Nil]"
-
-/**
  * Type constructor forall X.T
  */
 case class Forall(X: TVar, T: Type) extends Type:

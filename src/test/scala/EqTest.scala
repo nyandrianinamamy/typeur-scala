@@ -83,7 +83,7 @@ class EqTest:
 
     val env: ENV = Map()
     generate_equation(hd, TVar.t0, env) match
-      case h :: q => assertEquals(s"x0 = (forall X.[X] -> X)", h.toString)
+      case h :: q => assertEquals(s"x0 = N", h.toString)
 
   @Test def should_gen_eq_tail(): Unit =
     val lst = Cons(Nat(0), EOL())
