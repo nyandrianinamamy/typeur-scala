@@ -25,7 +25,7 @@ class TypeurTest:
     catch
       case e: Error => assertEquals("Non typable", e.getMessage())
 
-  @Test def `let f = (lambda x.x) in (f 1)`(): Unit =
+  @Test def `let f = (lambda x.x) in (f 1) : N`(): Unit =
     val x = Var("x")
     val f = Var("f")
     val `1` = Nat(1)
@@ -35,3 +35,24 @@ class TypeurTest:
     val term = Letin(f, abs, app)
 
     assertEquals("N", infer(term).toString)
+
+  @Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t) : N`(): Unit =
+    val x = Var("x")
+    val f = Var("f")
+    val t = Var("t")
+    val g = Var("g")
+    val y = Var("y")
+    val T = TVar(t)
+    val `1` = Nat(1)
+    val `f 1` = App(f, `1`)
+    val `lambda x.x` = Abs(x, x)
+    val `lambda xy.x` = Abs(x, Abs(y, x))
+    val `f t` = App(f, t)
+    val `g (f 1) (f t)` = App(App(g, `f 1`), `f t`)
+
+    val `let g` = Letin(g, `lambda xy.x`, `g (f 1) (f t)`)
+    val `let f` = Letin(f, `lambda x.x`, `let g`)
+
+    val env: ENV = Map(t -> T)
+
+    assertEquals("N", infer(`let f`, env).toString)

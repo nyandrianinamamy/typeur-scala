@@ -22,6 +22,7 @@ def occur_check(x: Var, t: Type): Boolean =
  */
 def substitue(x: Var, s: Type, t: Type): Type =
   t match
+    case n: N => n
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
@@ -32,6 +33,15 @@ def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   eqs map {
     case Eq(ltype, rtype) => Eq(substitue(x, s, ltype), substitue(x, s, rtype))
   }
+
+/**
+ * Removes the forall surrounding a type expression
+ */
+def open_forall(f: Type): Type =
+  f match
+    case Forall(c: TVar, d: Forall) => open_forall(d)
+    case Forall(c: TVar, d: Type) => d
+    case _ => throw new Error("Not type Forall")
 
 /**
  * Simple equation unifier.
@@ -54,16 +64,15 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(l, r) if l equals r =>
         unification_etape(t)
 
+      // Open right forall, barendregt type
       case Eq(l, Forall(a, b)) =>
-        def open_forall(f: Type): Type =
-          f match
-            case Forall(c: TVar, d: Forall) => open_forall(d)
-            case Forall(c: TVar, d: Type) => d
-            case _ => throw new Error("Not type Forall")
+        val alpha_converted = alpha_conversion_type(Forall(a, b))
+        unification_etape(Eq(l, open_forall(alpha_converted)) :: t)
 
-        val act = alpha_conversion_type(Forall(a, b))
-        val opened = open_forall(act)
-        unification_etape(Eq(l, opened) :: t)
+      // Open left forall, barendregt type
+      case Eq(Forall(a, b), r) =>
+        val alpha_converted = alpha_conversion_type(Forall(a, b))
+        unification_etape(Eq(open_forall(alpha_converted), r) :: t)
 
       // Remove X = Td and eqs[X/Td] if X not in Td
       case Eq(TVar(x), r) if !(r contains x) =>

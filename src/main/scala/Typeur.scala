@@ -4,7 +4,9 @@ object Typeur {
     try {
       unification_etape(eqs) match
         case List(Eq(_, rtype: Type)) => rtype
-        case _ => throw Error("Non typable")
+        case _ => throw Error("List eq mismatch")
     } catch
-      case _ => throw Error("Non typable")
+      case e: Error =>
+        println(e.getMessage())
+        throw Error("Non typable")
 }

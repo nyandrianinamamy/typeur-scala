@@ -135,8 +135,9 @@ class UnificationTest:
     val X = Var("X")
     val tx = TVar(X)
     val t = TVar(Var("t"))
+    val s = TVar(Var("s"))
     val forall = Forall(TVar(X), TVar(X))
 
-    val eqs: List[Eq] =  Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
+    val eqs: List[Eq] = Eq(forall, s) ::  Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
 
     assertEquals("List(x0 = X)", unification_etape(eqs).toString)

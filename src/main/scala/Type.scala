@@ -41,10 +41,15 @@ case class Forall(X: TVar, T: Type) extends Type:
   override def toString: String = s"forall ${X.toString}.${T.toString}"
 
 object TVar {
+  var last: Int = 1
   val t0 = TVar(Var.`0`)
 
   def fresh_tvar(): TVar =
-    return TVar(Var(s"x${Var.last}"))
+    TVar.last = TVar.last + 1
+    return TVar(Var(s"t${TVar.last}"))
+
+  def last_tvar(): TVar =
+    return TVar(Var(s"t${TVar.last}"))
 }
 
 /**
