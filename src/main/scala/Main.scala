@@ -8,5 +8,6 @@ import scala.language.postfixOps
 
   val term = Abs(x, Abs(y, Abs(z, App(App(x, z), App(y, z)))))
 
-  println(infer(term))
+  val t = Abs(y, Abs(z, y));
 
+  println(infer(t))

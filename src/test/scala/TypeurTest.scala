@@ -72,6 +72,13 @@ class TypeurTest:
 
     assertEquals("N", infer(head).toString)
 
+
+  @Test def `Tail [1, [2, Nil]]: [N]`: Unit =
+    val lst = Cons(Nat(1), Cons(Nat(2), EOL()))
+    val tail = Tail(lst)
+
+    assertEquals("[N]", infer(tail).toString)
+
   @Test def `Nil: Not typable`: Unit =
     val lst = EOL()
 
