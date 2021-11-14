@@ -29,6 +29,7 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
     case Forall(a, b) => t
+    case TRef(y) => TRef(substitue(x, s, y))
 
 def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   eqs map {

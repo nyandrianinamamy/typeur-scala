@@ -162,3 +162,27 @@ class TypeurTest:
     val eval = Fix(f, Nat(1))
 
     assertEquals("N", infer(eval).toString)
+
+  @Test def `unit : Unit`: Unit =
+    val u = Void()
+
+    assertEquals("Unit", infer(u).toString)
+
+  @Test def `r = Ref x: Ref x`: Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+
+    val r = Ref(x)
+
+    val env: ENV = Map(x -> tx)
+    assertEquals("Ref x", infer(r, env).toString)
+
+  @Test def `dr = Deref(Ref x): x`: Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+
+    val r = Ref(x)
+    val dr = Deref(dr)
+
+    val env: ENV = Map(x -> tx)
+    assertEquals("x", infer(dr, env).toString)
