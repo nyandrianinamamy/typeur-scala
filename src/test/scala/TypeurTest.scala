@@ -107,7 +107,7 @@ class TypeurTest:
     val lst = Cons(abs, Cons(abs, EOL()))
 
     val env: ENV = Map()
-    assertEquals("[(x4 -> x4)]", infer(lst).toString)
+    assertEquals("[(x3 -> x3)]", infer(lst).toString)
 
   @Test def `1 op 1: N`: Unit =
     val add = Add(Nat(1), Nat(1))

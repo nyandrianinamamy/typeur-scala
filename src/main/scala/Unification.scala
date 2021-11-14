@@ -11,6 +11,7 @@ def occur_check(x: Var, t: Type): Boolean =
     case Arrow(arg, res) => occur_check(x, arg) || occur_check(x, res)
     case Forall(a, b) => occur_check(x, a) || occur_check(x, b)
     case n: N => false
+    case TLst(t) => occur_check(x, t)
 
 /**
  * Substitute type t with type s for all occurrences of var x in type t
@@ -27,8 +28,7 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
-    case Forall(a, b) => substitue(x, s, a) match
-      case tv: TVar => Forall(tv, substitue(x, s, b))
+    case Forall(a, b) => t
 
 def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   eqs map {
@@ -62,9 +62,6 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(l, r) if l equals r =>
         unification_etape(t)
 
-      case Eq(tv: TVar, r) if tv.equals(TVar.t0) =>
-        h :: unification_etape(t)
-
       // Open right forall, barendregt type
       case Eq(l, Forall(a, b)) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
@@ -74,6 +71,9 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(Forall(a, b), r) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
         unification_etape(Eq(open_forall(alpha_converted), r) :: t)
+
+      case Eq(tv: TVar, r) if tv.equals(TVar.t0) =>
+        h :: unification_etape(t)
 
       // Remove X = Td and eqs[X/Td] if X not in Td
       case Eq(TVar(x), r) if !(r contains x) =>
@@ -87,13 +87,7 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
         unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
 
-      case Eq(TLst(a), TLst(b)) if !a.equals(b) =>
-        throw new Error("Type constructor different")
-
-      case Eq(TLst(x), r) =>
-        unification_etape(Eq(x, r) :: t)
-
-      case Eq(l, TLst(x)) =>
-        unification_etape(Eq(l, x) :: t)
+      case Eq(TLst(l), TLst(r)) =>
+        unification_etape(Eq(l, r) :: t)
 
       case _ => throw new Error("Unification failed")

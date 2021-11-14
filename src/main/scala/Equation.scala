@@ -40,31 +40,30 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       List()
 
     case cons@Cons(term: Term, lst: Lst) =>
-      val x = Var("x")
+      val x = Var.fresh_var()
       val X = TVar(x)
       val tlst = TLst(X)
-      generate_equation(lst, tlst, env) ::: generate_equation(term, X, env) ::: Eq(t0, tlst) :: List()
 
-    case Head(lst) =>
-      val x = Var("x")
-      val X = TVar(x)
-      val `[X]` = TLst(X)
-      val `[X] -> X` = Arrow(`[X]`, X)
-      val `Forall X.[X] -> X` = Forall(X, `[X] -> X`)
-      generate_equation(lst, X, env + (x -> `Forall X.[X] -> X`)) ::: Eq(t0, X) :: List()
-
-
-    case Tail(lst) =>
-      val x = Var("x")
-      val X = TVar(x)
-      val `[X]` = TLst(X)
-      val `[X] -> [X]` = Arrow(`[X]`, `[X]`)
-      val `Forall X.[X] -> [X]` = Forall(X, `[X] -> [X]`)
-
-      val eq1 = generate_equation(lst, X, env + (x -> `Forall X.[X] -> [X]`))
-      val eq2 = Eq(t0, `[X]`)
+      val eq1 = generate_equation(term, X, env)
+      val eq2 = Eq(t0, tlst)
       eq1 ::: eq2 :: List()
 
+    case Head(lst) =>
+      val X = TVar(Var.fresh_var())
+      val `[X]` = TLst(X)
+
+      val eq1 = generate_equation(lst, `[X]`, env)
+      val eq2 = Eq(t0, X)
+
+      eq1 ::: eq2 :: List()
+
+    case Tail(lst) =>
+      val X = TVar(Var.fresh_var())
+
+      val eq1 = generate_equation(lst, X, env)
+      val eq2 = Eq(t0, X)
+
+      eq1 ::: eq2 :: List()
 
     case Letin(x, e1, e2) =>
       val t1 = infer(e1, env)
@@ -79,7 +78,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       eq1 ::: eq2 ::: eq3 ::: List()
 
     case Iete(lst, term1, term2) =>
-      val x = Var("x")
+      val x = Var.fresh_var()
       val X = TVar(x)
       val `[X]` = TLst(X)
       val `Forall X.[X]` = Forall(X, `[X]`)

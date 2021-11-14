@@ -80,14 +80,14 @@ class EqTest:
     val hd = Head(lst)
 
     val env: ENV = Map()
-    assertEquals("List(x = N, x = [x], x0 = x)", generate_equation(hd, TVar.t0, env).toString)
+    assertEquals("List(x3 = N, [x2] = [x3], x0 = x2)", generate_equation(hd, TVar.t0, env).toString)
 
   @Test def should_gen_eq_tail(): Unit =
     val lst = Cons(Nat(0), Cons(Nat(1), EOL()))
     val t = Tail(lst)
 
     val env: ENV = Map()
-    assertEquals("List(x = N, [x] = [x], x = N, x = [x], x0 = [x])", generate_equation(t, TVar.t0, env).toString)
+    assertEquals("List(x3 = N, x2 = [x3], x0 = x2)", generate_equation(t, TVar.t0, env).toString)
 
   @Test def should_gen_eq_let_add(): Unit =
     val x = Var("x")
