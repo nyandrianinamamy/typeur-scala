@@ -31,5 +31,5 @@ class OperatorTest:
     val term = Abs(x, App(f, x))
     val eval = Fix(f, term)
 
-    print(eval)
+    assertEquals("fix (f, fun (x) -> (f x))", eval.toString)
 

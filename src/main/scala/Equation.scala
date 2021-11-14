@@ -89,6 +89,11 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val eq3 = generate_equation(term2, t0, env)
       eq1 ::: eq2 ::: eq3 ::: List()
 
+    case Fix(phi, m) =>
+      val tf = TVar(Var.fresh_var())
+      val eq2 = generate_equation(m, t0, env + (phi -> tf))
+      eq2 ::: List()
+
 /**
  * Generalize a type with all free vars not in env
  * ∀x1...xk.t

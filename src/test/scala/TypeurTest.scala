@@ -147,3 +147,18 @@ class TypeurTest:
     val cond = Iete(lst, Nat(1), Nat(2))
 
     assertEquals("N", infer(cond).toString)
+
+  @Test def `fix (f, lambda x. f x) : x3 -> x4`: Unit =
+    val x = Var("x")
+    val y = Var("y")
+    val f = Var("f")
+    val term = Abs(x, App(f, x))
+    val eval = Fix(f, term)
+
+    assertEquals("(x3 -> x4)", infer(eval).toString)
+
+  @Test def `fix (f, 1) : N`: Unit =
+    val f = Var("f")
+    val eval = Fix(f, Nat(1))
+
+    assertEquals("N", infer(eval).toString)
