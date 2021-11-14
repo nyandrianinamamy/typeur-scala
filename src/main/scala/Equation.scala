@@ -78,6 +78,17 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val eq3 = generate_equation(term2, t0, env)
       eq1 ::: eq2 ::: eq3 ::: List()
 
+    case Iete(lst, term1, term2) =>
+      val x = Var("x")
+      val X = TVar(x)
+      val `[X]` = TLst(X)
+      val `Forall X.[X]` = Forall(X, `[X]`)
+
+      val eq1 = generate_equation(lst, `[X]`, env + (x -> `Forall X.[X]`))
+      val eq2 = generate_equation(term1, t0, env)
+      val eq3 = generate_equation(term2, t0, env)
+      eq1 ::: eq2 ::: eq3 ::: List()
+
 /**
  * Generalize a type with all free vars not in env
  * ∀x1...xk.t

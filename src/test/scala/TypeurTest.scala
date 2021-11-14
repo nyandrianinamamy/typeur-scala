@@ -136,3 +136,14 @@ class TypeurTest:
     } catch {
       case e: Error => assertEquals("Non typable", e.getMessage())
     }
+
+  @Test def `if Nil then 1 else 2: N`: Unit =
+    val cond = Iete(EOL(), Nat(1), Nat(2))
+
+    assertEquals("N", infer(cond).toString)
+
+  @Test def `if [1, Nil] then 1 else 2: N`: Unit =
+    val lst = Cons(Nat(1), EOL())
+    val cond = Iete(lst, Nat(1), Nat(2))
+
+    assertEquals("N", infer(cond).toString)
