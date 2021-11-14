@@ -43,7 +43,7 @@ class UnificationTest:
     try {
       val unified = unification_etape(eqs)
     } catch {
-      case e: Error => assertEquals("Unification failed", e.getMessage())
+      case e: Error => assertEquals("X = (Y -> X) non unifiable, (Y -> X) contains X", e.getMessage())
     }
 
 

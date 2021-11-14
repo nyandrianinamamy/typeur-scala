@@ -65,6 +65,16 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(l, r) if l equals r =>
         unification_etape(t)
 
+      // Remove a -> b = c -> d and replace with a = c and b = d
+      case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
+        unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
+
+      case Eq(TLst(l), TLst(r)) =>
+        unification_etape(Eq(l, r) :: t)
+
+      case Eq(TRef(a), TRef(b)) =>
+        unification_etape(Eq(a, b) :: t)
+
       // Open right forall, barendregt type
       case Eq(l, Forall(a, b)) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
@@ -78,22 +88,18 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(tv: TVar, r) if tv.equals(TVar.t0) =>
         h :: unification_etape(t)
 
+      case eq@Eq(TVar(x), r) if r contains x =>
+        throw new Error(s"$eq non unifiable, $r contains $x")
+
+      case eq@Eq(l, TVar(x)) if l contains x =>
+        throw new Error(s"$eq non unifiable, $l contains $x")
+
       // Remove X = Td and eqs[X/Td] if X not in Td
-      case Eq(TVar(x), r) if !(r contains x) =>
+      case Eq(TVar(x), r) =>
         unification_etape(substitue_partout(x, r, t))
 
       // Remove Td = X and eqs[X/Td] if X not in Td
-      case Eq(l, TVar(x)) if !(l contains x) =>
+      case Eq(l, TVar(x)) =>
         unification_etape(substitue_partout(x, l, t))
-
-      // Remove a -> b = c -> d and replace with a = c and b = d
-      case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
-        unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
-
-      case Eq(TLst(l), TLst(r)) =>
-        unification_etape(Eq(l, r) :: t)
-
-      case Eq(TRef(a), TRef(b)) =>
-        unification_etape(Eq(a, b) :: t)
 
       case _ => throw new Error("Unification failed")
