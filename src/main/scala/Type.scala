@@ -34,6 +34,12 @@ case class TLst(T: Type) extends Type :
 case class Forall(X: TVar, T: Type) extends Type:
   override def toString: String = s"forall ${X.toString}.${T.toString}"
 
+case class TVoid() extends Type:
+  override def toString: String = "Unit"
+
+case class TRef(t: Type) extends Type:
+  override def toString: String = s"Ref ${t.toString}"
+
 object TVar {
   var last: Int = 1
   val t0 = TVar(Var.`0`)

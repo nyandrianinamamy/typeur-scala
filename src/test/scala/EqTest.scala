@@ -109,3 +109,21 @@ class EqTest:
     val let = Letin(f, abs, app)
     val env: ENV = Map()
     assertEquals("List(x4 = N, (x4 -> x0) = forall x2.(x2 -> x2))", generate_equation(let, TVar.t0, env).toString)
+
+  @Test def should_gen_eq_unit(): Unit =
+    val u = Void()
+
+    val env: ENV = Map()
+    val eqs = generate_equation(u, TVar.t0, env)
+    assertEquals("List(x0 = Unit)", eqs.toString)
+
+  @Test def should_gen_eq_ref(): Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+    val r = Ref(x) // Ref tx
+
+    val env: ENV = Map(x -> tx)
+    val eqs = generate_equation(r, TVar.t0, env)
+    assertEquals("List(x2 = x, x0 = Ref x2)", eqs.toString)
+
+
