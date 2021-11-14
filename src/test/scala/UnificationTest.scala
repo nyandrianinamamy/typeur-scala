@@ -3,7 +3,7 @@ import org.junit.Assert.*
 
 
 class UnificationTest:
-  @Test def should_skip_t0(): Unit =
+  @Test def should_skip_t0: Unit =
     val X = TVar(Var("X"))
     val Y = TVar(Var("Y"))
     val eqs = Eq(TVar.t0, X) :: Eq(TVar.t0, Y) :: List()
@@ -11,6 +11,57 @@ class UnificationTest:
     val unified = unification_etape(eqs)
 
     assertEquals("List(x0 = X, x0 = Y)", unified.toString)
+
+  @Test def should_remove_equal_types: Unit =
+    val X = TVar(Var("X"))
+    val tlst = TLst(X)
+    val eqs = Eq(X, X) :: Eq(tlst, tlst) :: List()
+
+    val unified = unification_etape(eqs)
+
+    assertTrue("Equal types should be removed", unified.isEmpty)
+
+  @Test def should_substitute_X_by_Td: Unit =
+    val X = TVar(Var("X"))
+    val Y = TVar(Var("Y"))
+    val Z = TVar(Var("Z"))
+    val A = TVar(Var("A"))
+    val `X -> X` = Arrow(X, X)
+    val eqs = Eq(X, Y) :: Eq(Z, `X -> X`) :: Eq(`X -> X`, A) :: List()
+
+    val unified = unification_etape(eqs)
+
+    assertEquals("List()", unified.toString)
+
+  @Test def should_not_substitute_X_by_Td: Unit =
+    val X = TVar(Var("X"))
+    val Y = TVar(Var("Y"))
+    val `X -> X` = Arrow(X, X)
+    val `Y -> X` = Arrow(Y, X)
+    val eqs = Eq(X, `Y -> X`) :: List()
+
+    try {
+      val unified = unification_etape(eqs)
+    } catch {
+      case e: Error => assertEquals("Unification failed", e.getMessage())
+    }
+
+
+  @Test def should_remove_arrow_types_and_create_equal_types: Unit =
+    val A = TVar(Var("A"))
+    val B = TVar(Var("B"))
+
+    val `X -> Y` = Arrow(TVar.t0, TVar.t0) // To avoid removal of X = A after
+    val `A -> B` = Arrow(A, B)
+
+    val eqs = Eq(`X -> Y`, `A -> B`) :: List()
+
+    val unified = unification_etape(eqs)
+
+    assertEquals("List(x0 = A, x0 = B)", unified.toString)
+
+
+
 //  @Test def occurence_in_tvar(): Unit =
 //    val x = Var("x")
 //    val t = TVar(x)
