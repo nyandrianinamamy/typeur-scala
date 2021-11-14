@@ -11,3 +11,16 @@ class SolveurTest:
     val eqs = Eq(TVar.t0, X) :: List()
 
     assertEquals(X, solve(eqs))
+
+
+  @Test def should_fail_on_conflict(): Unit =
+    val X = TVar(Var("X"))
+    val Y = TVar(Var("Y"))
+
+    val eqs = Eq(TVar.t0, X) :: Eq(TVar.t0, Y) :: List()
+
+    try {
+      solve(eqs)
+    } catch {
+      case e: Error => assertEquals(s"${TVar.t0} has conflicting types $X and $Y", e.getMessage())
+    }
