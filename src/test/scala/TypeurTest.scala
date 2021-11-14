@@ -115,3 +115,19 @@ class TypeurTest:
 
     assertEquals("N", infer(add).toString);
     assertEquals("N", infer(diff).toString);
+
+
+  @Test def `if 0 then 1 else 2: N`: Unit =
+    val cond = Izte(Nat(0), Nat(1), Nat(2))
+
+    assertEquals("N", infer(cond).toString)
+
+  @Test def `if 0 then T else X: Non Typable`: Unit =
+    val x = Var("x")
+    val X = TVar(x)
+    val t = Var("t")
+    val T = TVar(t)
+    val cond = Izte(Nat(0), t, x)
+
+    val env: ENV = Map(t -> T, x -> X)
+    assertEquals("t", infer(cond, env).toString)

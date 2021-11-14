@@ -54,16 +54,16 @@ def open_forall(f: Type): Type =
 def unification_etape(eqs: List[Eq]): List[Eq] =
   eqs match
 
-    case Nil => throw Error("No more equations in list")
+    case Nil => eqs
 
     case h :: t => h match // extract to independent function
-
-      case eq@Eq(TVar.t0, r: Type) if t.isEmpty =>
-        eq :: List()
 
       // Removes an eq if ltype = rtype
       case Eq(l, r) if l equals r =>
         unification_etape(t)
+
+      case Eq(tv: TVar, r) if tv.equals(TVar.t0) =>
+        h :: unification_etape(t)
 
       // Open right forall, barendregt type
       case Eq(l, Forall(a, b)) =>
@@ -75,17 +75,20 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
         val alpha_converted = alpha_conversion_type(Forall(a, b))
         unification_etape(Eq(open_forall(alpha_converted), r) :: t)
 
-      // Remove X = Td and eqs[X/Td] if X not in Td
-      case Eq(TVar(x), r) if !(r contains x) =>
+      // Remove X = Td and eqs[X/Td] if X not in Td and X is not t0
+      case Eq(TVar(x), r) if (!(r contains x) && !(x == Var.`0`)) =>
         unification_etape(substitue_partout(x, r, t))
 
       // Remove Td = X and eqs[X/Td] if X not in Td
-      case Eq(l, TVar(x)) if !(l contains x) =>
+      case Eq(l, TVar(x)) if (!(l contains x) && !(l contains Var.`0`)) =>
         unification_etape(substitue_partout(x, l, t))
 
       // Remove a -> b = c -> d and replace with a = c and b = d
       case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
         unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
+
+      case Eq(TLst(a), TLst(b)) if !a.equals(b) =>
+        throw new Error("Type constructor different")
 
       case Eq(TLst(x), r) =>
         unification_etape(Eq(x, r) :: t)
@@ -93,5 +96,4 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(l, TLst(x)) =>
         unification_etape(Eq(l, x) :: t)
 
-
-      case _ => throw Error("Cannot unify")
+      case _ => eqs
