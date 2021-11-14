@@ -2,14 +2,14 @@
  * If zero Then term1 Else term2
  *
  */
-case class Izte(nat: Nat, term1: Term, term2: Term):
+case class Izte(nat: Nat, term1: Term, term2: Term) extends Term:
   override def toString: String = s"If ${nat.toString} then ${term1.toString} else ${term2.toString}"
 
 /**
  * If empty Then term1 Else term2
  *
  */
-case class Iete(lst: Lst, term1: Term, term2: Term):
+case class Iete(lst: Lst, term1: Term, term2: Term) extends Term:
   override def toString: String = s"If ${lst.toString} then ${term1.toString} else ${term2.toString}"
 
 /**
@@ -36,7 +36,6 @@ case class Tail(lst: Lst) extends Term:
 case class Add(a: Term, b: Term) extends Term:
   override def toString: String =
     s"${a.toString()} + ${b.toString()}"
-
 
 /**
  * Substraction operator

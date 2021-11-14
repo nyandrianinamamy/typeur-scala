@@ -31,7 +31,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       generate_equation(term2, t1, env) ::: generate_equation(term1, `t1->t0`, env)
 
     case Add(t1, t2) =>
-       generate_equation(t1, N(), env) ::: generate_equation(t2, N(), env) ::: Eq(t0, N()) :: List()
+      generate_equation(t1, N(), env) ::: generate_equation(t2, N(), env) ::: Eq(t0, N()) :: List()
 
     case Diff(t1, t2) =>
       generate_equation(t1, N(), env) ::: generate_equation(t2, N(), env) ::: Eq(t0, N()) :: List()
@@ -60,7 +60,10 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val `[X]` = TLst(X)
       val `[X] -> [X]` = Arrow(`[X]`, `[X]`)
       val `Forall X.[X] -> [X]` = Forall(X, `[X] -> [X]`)
-      generate_equation(lst, X, env + (x -> `Forall X.[X] -> [X]`)) ::: Eq(t0, `[X]`) :: List()
+
+      val eq1 = generate_equation(lst, X, env + (x -> `Forall X.[X] -> [X]`))
+      val eq2 = Eq(t0, `[X]`)
+      eq1 ::: eq2 :: List()
 
 
     case Letin(x, e1, e2) =>
@@ -68,6 +71,12 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val newenv = getFreeVar(t1, env)
       val tx = generalise(newenv, t1)
       generate_equation(e2, t0, env + (x -> tx))
+
+    case Izte(nat, term1, term2) =>
+      val eq1 = generate_equation(nat, N(), env)
+      val eq2 = generate_equation(term1, t0, env)
+      val eq3 = generate_equation(term2, t0, env)
+      eq1 ::: eq2 ::: eq3 ::: List()
 
 /**
  * Generalize a type with all free vars not in env

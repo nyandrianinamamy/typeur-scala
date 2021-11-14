@@ -130,4 +130,9 @@ class TypeurTest:
     val cond = Izte(Nat(0), t, x)
 
     val env: ENV = Map(t -> T, x -> X)
-    assertEquals("t", infer(cond, env).toString)
+
+    try {
+      infer(cond, env)
+    } catch {
+      case e: Error => assertEquals("Non typable", e.getMessage())
+    }
