@@ -103,6 +103,15 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
       eq1 ::: eq2 :: List()
 
+    case Deref(e) =>
+      val X = TVar(Var.fresh_var())
+      val R = TRef(X)
+      val eq1 = generate_equation(e, R, env)
+      val eq2 = Eq(t0, R)
+
+      eq1 ::: eq2 :: List()
+
+
 
 /**
  * Generalize a type with all free vars not in env

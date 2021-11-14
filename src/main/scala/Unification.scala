@@ -90,4 +90,7 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(TLst(l), TLst(r)) =>
         unification_etape(Eq(l, r) :: t)
 
+      case Eq(TRef(a), TRef(b)) =>
+        unification_etape(Eq(a, b) :: t)
+
       case _ => throw new Error("Unification failed")

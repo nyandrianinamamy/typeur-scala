@@ -120,10 +120,20 @@ class EqTest:
   @Test def should_gen_eq_ref(): Unit =
     val x = Var("x")
     val tx = TVar(x)
-    val r = Ref(x) // Ref tx
+    val r = Ref(x)
 
     val env: ENV = Map(x -> tx)
     val eqs = generate_equation(r, TVar.t0, env)
     assertEquals("List(x2 = x, x0 = Ref x2)", eqs.toString)
+
+  @Test def should_gen_eq_deref(): Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+    val r = Ref(x) // Ref tx
+    val dr = Deref(r)
+
+    val env: ENV = Map(x -> tx)
+    val eqs = generate_equation(dr, TVar.t0, env)
+    assertEquals("List(x3 = x, Ref x2 = Ref x3, x0 = Ref x2)", eqs.toString)
 
 
