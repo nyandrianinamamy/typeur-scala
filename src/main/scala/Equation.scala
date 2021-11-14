@@ -111,6 +111,17 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
       eq1 ::: eq2 :: List()
 
+    case Assign(e1, e2) =>
+      val x = Var.fresh_var()
+      val tx = TVar(x)
+
+      val tr = TRef(tx)
+      val eq1 = generate_equation(e1, tr, env)
+      val eq2 = generate_equation(e2, tx, env)
+      val eq3 = Eq(t0, TVoid())
+
+      eq1 ::: eq2 ::: eq3 :: List()
+
 
 
 /**

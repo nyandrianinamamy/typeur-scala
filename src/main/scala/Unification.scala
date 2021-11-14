@@ -12,6 +12,7 @@ def occur_check(x: Var, t: Type): Boolean =
     case Forall(a, b) => occur_check(x, a) || occur_check(x, b)
     case n: N => false
     case TLst(t) => occur_check(x, t)
+    case TRef(r) => occur_check(x, r)
 
 /**
  * Substitute type t with type s for all occurrences of var x in type t
@@ -30,6 +31,7 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
     case Forall(a, b) => t
     case TRef(y) => TRef(substitue(x, s, y))
+    case TVoid() => t
 
 def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   eqs map {

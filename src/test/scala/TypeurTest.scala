@@ -186,3 +186,15 @@ class TypeurTest:
 
     val env: ENV = Map(x -> tx)
     assertEquals("x", infer(dr, env).toString)
+
+  @Test def `x := y : Unit`: Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+    val y = Var("y")
+    val ty = TVar(y)
+
+    val r = Ref(x)
+    val u = Assign(r, y)
+
+    val env: ENV = Map(x -> tx, y -> ty)
+    assertEquals("Unit", infer(u, env).toString)

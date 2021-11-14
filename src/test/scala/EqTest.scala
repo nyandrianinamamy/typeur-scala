@@ -137,3 +137,18 @@ class EqTest:
     assertEquals("List(x3 = x, Ref x2 = Ref x3, x0 = x2)", eqs.toString)
 
 
+  @Test def should_gen_eq_assign(): Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+    val y = Var("y")
+    val ty = TVar(y)
+
+    val r = Ref(x)
+    val a = Assign(x, y)
+
+    val env: ENV = Map(x -> tx, y -> ty)
+    val eqs = generate_equation(a, TVar.t0, env)
+
+    assertEquals("List(Ref x2 = x, x2 = y, x0 = Unit)", eqs.toString)
+
+
