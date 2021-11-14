@@ -107,7 +107,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val X = TVar(Var.fresh_var())
       val R = TRef(X)
       val eq1 = generate_equation(e, R, env)
-      val eq2 = Eq(t0, R)
+      val eq2 = Eq(t0, X)
 
       eq1 ::: eq2 :: List()
 

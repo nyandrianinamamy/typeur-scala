@@ -134,6 +134,6 @@ class EqTest:
 
     val env: ENV = Map(x -> tx)
     val eqs = generate_equation(dr, TVar.t0, env)
-    assertEquals("List(x3 = x, Ref x2 = Ref x3, x0 = Ref x2)", eqs.toString)
+    assertEquals("List(x3 = x, Ref x2 = Ref x3, x0 = x2)", eqs.toString)
 
 
