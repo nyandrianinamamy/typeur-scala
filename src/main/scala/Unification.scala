@@ -59,7 +59,7 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
 
     case Nil => eqs
 
-    case h :: t => h match // extract to independent function
+    case h :: t => h match
 
       // Removes an eq if ltype = rtype
       case Eq(l, r) if l equals r =>
@@ -85,21 +85,19 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
         val alpha_converted = alpha_conversion_type(Forall(a, b))
         unification_etape(Eq(open_forall(alpha_converted), r) :: t)
 
-      case Eq(tv: TVar, r) if tv.equals(TVar.t0) =>
+      case Eq(tv: TVar, _) if tv.equals(TVar.t0) =>
         h :: unification_etape(t)
 
-      case eq@Eq(TVar(x), r) if r contains x =>
-        throw new Error(s"$eq non unifiable, $r contains $x")
-
-      case eq@Eq(l, TVar(x)) if l contains x =>
-        throw new Error(s"$eq non unifiable, $l contains $x")
-
       // Remove X = Td and eqs[X/Td] if X not in Td
-      case Eq(TVar(x), r) =>
+      case eq@Eq(TVar(x), r) =>
+        if r contains x
+        then throw new Error(s"$eq non unifiable, $r contains $x")
         unification_etape(substitue_partout(x, r, t))
 
       // Remove Td = X and eqs[X/Td] if X not in Td
       case Eq(l, TVar(x)) =>
+        if l contains x
+        then throw new Error(s"$eq non unifiable, $l contains $x")
         unification_etape(substitue_partout(x, l, t))
 
       case _ => throw new Error("Unification failed")
