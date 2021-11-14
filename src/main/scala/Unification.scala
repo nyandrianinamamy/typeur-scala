@@ -76,11 +76,11 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
         unification_etape(Eq(open_forall(alpha_converted), r) :: t)
 
       // Remove X = Td and eqs[X/Td] if X not in Td and X is not t0
-      case Eq(TVar(x), r) if (!(r contains x) && !(x == Var.`0`)) =>
+      case Eq(TVar(x), r) if !(r contains x) =>
         unification_etape(substitue_partout(x, r, t))
 
       // Remove Td = X and eqs[X/Td] if X not in Td
-      case Eq(l, TVar(x)) if (!(l contains x) && !(l contains Var.`0`)) =>
+      case Eq(l, TVar(x)) if !(l contains x) =>
         unification_etape(substitue_partout(x, l, t))
 
       // Remove a -> b = c -> d and replace with a = c and b = d
