@@ -75,7 +75,7 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
         val alpha_converted = alpha_conversion_type(Forall(a, b))
         unification_etape(Eq(open_forall(alpha_converted), r) :: t)
 
-      // Remove X = Td and eqs[X/Td] if X not in Td and X is not t0
+      // Remove X = Td and eqs[X/Td] if X not in Td
       case Eq(TVar(x), r) if !(r contains x) =>
         unification_etape(substitue_partout(x, r, t))
 
