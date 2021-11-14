@@ -182,7 +182,7 @@ class TypeurTest:
     val tx = TVar(x)
 
     val r = Ref(x)
-    val dr = Deref(dr)
+    val dr = Deref(r)
 
     val env: ENV = Map(x -> tx)
     assertEquals("x", infer(dr, env).toString)
