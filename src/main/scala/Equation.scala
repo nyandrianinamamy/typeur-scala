@@ -51,11 +51,15 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
     case Head(lst) =>
       val X = TVar(Var.fresh_var())
       val `[X]` = TLst(X)
+      val `[X] -> X` = Arrow(`[X]`, X)
+
+      val `[T]` = TLst(t0)
+      val `[T] -> T` = Arrow(`[T]`, t0)
 
       val eq1 = generate_equation(lst, `[X]`, env)
-      val eq2 = Eq(t0, X)
+      val eq2 = List(Eq(`[T] -> T`, Forall(X, `[X] -> X`)))
 
-      eq1 ::: eq2 :: List()
+      eq1 ::: eq2::: List()
 
     case Tail(lst) =>
       val X = TVar(Var.fresh_var())
