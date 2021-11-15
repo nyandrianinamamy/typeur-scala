@@ -51,6 +51,6 @@ class TypeTest:
     val lt = Arrow(Arrow(X, X), X)
     val rt = Arrow(X, Arrow(X, X))
 
-    assertEquals(alpha_conversion_type(T).toString, "(t2 -> t2)")
-    assertEquals(alpha_conversion_type(lt).toString, "((t3 -> t3) -> t3)")
-    assertEquals(alpha_conversion_type(rt).toString, "(t4 -> (t4 -> t4))")
+    assertEquals("(t2 -> t2)", alpha_conversion_type(Forall(X, T)).toString)
+    assertEquals("((t3 -> t3) -> t3)", alpha_conversion_type(Forall(X, lt)).toString)
+    assertEquals("(t4 -> (t4 -> t4))", alpha_conversion_type(Forall(X, rt)).toString)
