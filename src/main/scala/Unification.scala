@@ -92,7 +92,7 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       // Remove X = Td and eqs[X/Td] if X not in Td
       case eq@Eq(TVar(x), r) =>
         if r contains x
-        then throw new Error(s"$eq non unifiable, $r contains $x")
+        then throw new Error(s"${eq.toString} non unifiable, $r contains $x")
 
         x match
           case Var.`0` => h :: unification_etape(t)
@@ -102,7 +102,13 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       // Remove Td = X and eqs[X/Td] if X not in Td
       case Eq(l, TVar(x)) =>
         if l contains x
-        then throw new Error(s"$eq non unifiable, $l contains $x")
+        then throw new Error(s"${eq.toString} non unifiable, $l contains $x")
         unification_etape(substitue_partout(x, l, t))
 
-      case _ => throw new Error(s"Case $h non unifiable")
+      case Eq(ar@Arrow(arg, res), r) =>
+        throw new Error(s"${ar.toString} not unifiable with ${r.toString}")
+
+      case Eq(l, ar@Arrow(arg, res)) =>
+        throw new Error(s"${ar.toString} not unifiable with ${l.toString}")
+
+      case _ => throw new Error(s"Case ${h.toString} non unifiable")

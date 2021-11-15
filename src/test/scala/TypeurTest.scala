@@ -148,20 +148,41 @@ class TypeurTest:
 
     assertEquals("N", infer(cond).toString)
 
-  @Test def `fix (f, lambda x. f x) : x3 -> x4`: Unit =
+  @Test def `fix (f: F -> F, 1: N): N`: Unit =
+    val f = Var("f")
+
+    val `F -> F` = Arrow(N(), N())
+    val fix = Fix(f, Nat(1))
+
+    val env: ENV = Map(f -> `F -> F`)
+    assertEquals("N", infer(fix, env).toString)
+
+  @Test def `fix (g: G, 1: N): Non typable`: Unit =
+    val g = Var("g")
+    val G = TVar(g)
+    val fix = Fix(g, Nat(1))
+
+    val env: ENV = Map(g -> G)
+
+    try {
+      infer(fix, env)
+    } catch {
+      case e: Error => assertEquals("Non typable", e.getMessage())
+    }
+
+  @Test def `fix (lambda x.x, t: T) : T`: Unit =
     val x = Var("x")
-    val y = Var("y")
-    val f = Var("f")
-    val term = Abs(x, App(f, x))
-    val eval = Fix(f, term)
+    val abs = Abs(x, x)
 
-    assertEquals("(x3 -> x4)", infer(eval).toString)
+    val t = Var("t")
+    val T = TVar(Var("T"))
 
-  @Test def `fix (f, 1) : N`: Unit =
-    val f = Var("f")
-    val eval = Fix(f, Nat(1))
+    val fix = Fix(abs, t)
 
-    assertEquals("N", infer(eval).toString)
+    val env: ENV = Map(t -> T)
+
+    assertEquals("T", infer(fix, env).toString)
+
 
   @Test def `unit : Unit`: Unit =
     val u = Void()

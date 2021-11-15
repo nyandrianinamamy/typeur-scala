@@ -27,7 +27,7 @@ class UnificationTest:
     val Z = TVar(Var("Z"))
     val A = TVar(Var("A"))
     val `X -> X` = Arrow(X, X)
-    val eqs = Eq(X, Y) :: Eq(Z, `X -> X`) :: Eq(`X -> X`, A) :: List()
+    val eqs = Eq(X, Y) :: Eq(`X -> X`, `X -> X`) :: List()
 
     val unified = unification_etape(eqs)
 

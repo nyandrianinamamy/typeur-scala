@@ -15,7 +15,7 @@ case class Iete(lst: Lst, term1: Term, term2: Term) extends Term :
 /**
  * Fix point operator
  */
-case class Fix(phi: Var, M: Term) extends Term :
+case class Fix(phi: Term, M: Term) extends Term :
   override def toString: String = s"fix (${phi.toString}, ${M.toString})"
 
 /**

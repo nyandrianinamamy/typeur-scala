@@ -90,8 +90,13 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
     case Fix(phi, m) =>
       val tf = TVar(Var.fresh_var())
-      val eq2 = generate_equation(m, t0, env + (phi -> tf))
-      eq2 ::: List()
+      val `tf -> tf` = Arrow(tf, tf)
+
+      val eq1 = generate_equation(m, tf, env)
+      val eq2 = generate_equation(phi, `tf -> tf`, env)
+      val eq3 = List(Eq(t0, tf))
+
+      eq2 ::: eq1 ::: eq3
 
     case Void() =>
       Eq(t0, TVoid()) :: List()
