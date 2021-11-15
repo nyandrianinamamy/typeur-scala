@@ -30,10 +30,7 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
-    case Forall(l, r) => l match {
-      case TVar(e) if e.equals(x) => t
-      case _ => Forall(l, substitue(x, s, r))
-    }
+    case Forall(l, r) => Forall(l, substitue(x, s, r))
     case TRef(y) => TRef(substitue(x, s, y))
     case TVoid() => t
 
@@ -82,12 +79,12 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       // Open right forall, barendregt type
       case Eq(l, Forall(a, b)) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
-        unification_etape(Eq(l, open_forall(alpha_converted)) :: t)
+        unification_etape(Eq(l, alpha_converted) :: t)
 
       // Open left forall, barendregt type
       case Eq(Forall(a, b), r) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
-        unification_etape(Eq(open_forall(alpha_converted), r) :: t)
+        unification_etape(Eq(alpha_converted, r) :: t)
 
       // Remove X = Td and eqs[X/Td] if X not in Td
       case eq@Eq(TVar(x), r) =>
