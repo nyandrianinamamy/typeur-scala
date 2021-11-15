@@ -13,6 +13,7 @@ def occur_check(x: Var, t: Type): Boolean =
     case n: N => false
     case TLst(t) => occur_check(x, t)
     case TRef(r) => occur_check(x, r)
+    case TVoid() => false
 
 /**
  * Substitute type t with type s for all occurrences of var x in type t
@@ -29,7 +30,10 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
-    case Forall(a, b) => t
+    case Forall(l, r) => l match {
+      case TVar(e) if e.equals(x) => t
+      case _ => Forall(l, substitue(x, s, r))
+    }
     case TRef(y) => TRef(substitue(x, s, y))
     case TVoid() => t
 
@@ -85,14 +89,15 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
         val alpha_converted = alpha_conversion_type(Forall(a, b))
         unification_etape(Eq(open_forall(alpha_converted), r) :: t)
 
-      case Eq(tv: TVar, _) if tv.equals(TVar.t0) =>
-        h :: unification_etape(t)
-
       // Remove X = Td and eqs[X/Td] if X not in Td
       case eq@Eq(TVar(x), r) =>
         if r contains x
         then throw new Error(s"$eq non unifiable, $r contains $x")
-        unification_etape(substitue_partout(x, r, t))
+
+        x match
+          case Var.`0` => h :: unification_etape(t)
+          case a: Var => unification_etape(substitue_partout(a, r, t))
+
 
       // Remove Td = X and eqs[X/Td] if X not in Td
       case Eq(l, TVar(x)) =>
@@ -100,4 +105,4 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
         then throw new Error(s"$eq non unifiable, $l contains $x")
         unification_etape(substitue_partout(x, l, t))
 
-      case _ => throw new Error("Unification failed")
+      case _ => throw new Error(s"Case $h non unifiable")
