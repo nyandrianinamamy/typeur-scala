@@ -26,7 +26,7 @@ class TypeurTest:
     catch
       case e: Error => assertEquals("Non typable", e.getMessage())
 
-  @Test def `let f = (lambda x.x) in (f 1) : N`(): Unit =
+  @Test def `let f = (lambda x.x) in (f 1): N`(): Unit =
     val x = Var("x")
     val f = Var("f")
     val `1` = Nat(1)
@@ -37,7 +37,7 @@ class TypeurTest:
 
     assertEquals("N", infer(term).toString)
 
-  @Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t) : N`(): Unit =
+  @Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t): N`(): Unit =
     val x = Var("x")
     val f = Var("f")
     val t = Var("t")
@@ -148,6 +148,24 @@ class TypeurTest:
 
     assertEquals("N", infer(cond).toString)
 
+  @Test def `if [1, Nil] then Head [2, Nil] else Head [3, Nil]: N`: Unit =
+    val lst1 = Cons(Nat(1), EOL())
+    val lst2 = Cons(Nat(2), EOL())
+    val lst3 = Cons(Nat(3), EOL())
+
+    val cond = Iete(lst1, Head(lst2), Head(lst3))
+
+    assertEquals("N", infer(cond).toString)
+
+  @Test def `if [1, Nil] then Tail [2, [3, Nil]] else Tail [3, [4, Nil]]: [N]`: Unit =
+    val lst1 = Cons(Nat(1), EOL())
+    val lst2 = Cons(Nat(2), Cons(Nat(3), EOL()))
+    val lst3 = Cons(Nat(3), Cons(Nat(4), EOL()))
+
+    val cond = Iete(lst1, Tail(lst2), Tail(lst3))
+
+    assertEquals("[N]", infer(cond).toString)
+
   @Test def `fix (f: F -> F, 1: N): N`: Unit =
     val f = Var("f")
 
@@ -170,7 +188,7 @@ class TypeurTest:
       case e: Error => assertEquals("Non typable", e.getMessage())
     }
 
-  @Test def `fix (lambda x.x, t: T) : T`: Unit =
+  @Test def `fix (lambda x.x, t: T): T`: Unit =
     val x = Var("x")
     val abs = Abs(x, x)
 
@@ -189,7 +207,7 @@ class TypeurTest:
 
     assertEquals("Unit", infer(u).toString)
 
-  @Test def `r = Ref x: Ref x`: Unit =
+  @Test def `Ref x: Ref x`: Unit =
     val x = Var("x")
     val tx = TVar(x)
 
@@ -198,7 +216,7 @@ class TypeurTest:
     val env: ENV = Map(x -> tx)
     assertEquals("Ref x", infer(r, env).toString)
 
-  @Test def `dr = Deref(Ref x): x`: Unit =
+  @Test def `Deref(Ref x): x`: Unit =
     val x = Var("x")
     val tx = TVar(x)
 

@@ -53,13 +53,13 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val `[X]` = TLst(X)
       val `[X] -> X` = Arrow(`[X]`, X)
 
-      val `[T]` = TLst(t0)
-      val `[T] -> T` = Arrow(`[T]`, t0)
+      val `[t0]` = TLst(t0)
+      val `[t0] -> t0` = Arrow(`[t0]`, t0)
 
       val eq1 = generate_equation(lst, `[X]`, env)
-      val eq2 = List(Eq(`[T] -> T`, Forall(X, `[X] -> X`)))
+      val eq2 = List(Eq(`[t0] -> t0`, `[X] -> X`))
 
-      eq1 ::: eq2::: List()
+      eq1 ::: eq2 ::: List()
 
     case Tail(lst) =>
       val X = TVar(Var.fresh_var())
@@ -132,13 +132,12 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       eq1 ::: eq2 ::: eq3 :: List()
 
 
-
 /**
  * Generalize a type with all free vars not in env
  * ∀x1...xk.t
  */
-def generalise(newEnv: List[TVar], t: Type): Type =
-  newEnv.foldLeft(t) {
+def generalise(free_type_vars: List[TVar], t: Type): Type =
+  free_type_vars.foldLeft(t) {
     case (acc, tv) => Forall(tv, acc)
   }
 
