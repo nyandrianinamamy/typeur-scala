@@ -6,6 +6,7 @@ class EqTest:
 
   @Before def initialize(): Unit =
     Var.last = 1
+    TVar.last = 1
 
   @Test def should_gen_eq_on_TVar(): Unit =
     val x = Var("x")

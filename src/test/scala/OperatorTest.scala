@@ -1,7 +1,11 @@
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.{Before, Test}
 
 class OperatorTest:
+  @Before def initialize(): Unit =
+    Var.last = 1
+    TVar.last = 1
+
   @Test def should_print_izte(): Unit =
     val x = Var("x")
     val y = Var("y")

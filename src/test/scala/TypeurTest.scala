@@ -5,7 +5,7 @@ import Typeur.*
 class TypeurTest:
   @Before def initialize(): Unit =
     Var.last = 1
-    TVar.last  = 1
+    TVar.last = 1
 
   @Test def `lambda xyz.(xz)(yz)`(): Unit =
     val x = Var("x")

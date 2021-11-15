@@ -1,8 +1,12 @@
-import org.junit.Test
+import org.junit.{Before, Test}
 import org.junit.Assert.*
 
 
 class UnificationTest:
+  @Before def initialize(): Unit =
+    Var.last = 1
+    TVar.last = 1
+
   @Test def should_skip_t0: Unit =
     val X = TVar(Var("X"))
     val Y = TVar(Var("Y"))
@@ -68,7 +72,7 @@ class UnificationTest:
     val s = TVar(Var("s"))
     val forall = Forall(TVar(X), TVar(X))
 
-    val eqs: List[Eq] = Eq(forall, s) ::  Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
+    val eqs: List[Eq] = Eq(forall, s) :: Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
 
     assertEquals("List(x0 = X)", unification_etape(eqs).toString)
 

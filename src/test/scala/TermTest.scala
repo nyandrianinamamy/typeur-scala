@@ -1,7 +1,11 @@
-import org.junit.Test
+import org.junit.{Before, Test}
 import org.junit.Assert.*
 
 class TermTest:
+  @Before def initialize(): Unit =
+    Var.last = 1
+    TVar.last = 1
+
   @Test def should_generate_different_var(): Unit =
     assertNotEquals(Var.fresh_var(), Var.fresh_var())
 
