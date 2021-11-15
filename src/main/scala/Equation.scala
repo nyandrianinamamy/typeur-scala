@@ -67,7 +67,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
     case Letin(x, e1, e2) =>
       val t1 = infer(e1, env)
-      val newenv = getFreeVar(t1, env)
+      val newenv = free_type_var(t1, env)
       val tx = generalise(newenv, t1)
       generate_equation(e2, t0, env + (x -> tx))
 
@@ -133,14 +133,15 @@ def generalise(newEnv: List[TVar], t: Type): Type =
     case (acc, tv) => Forall(tv, acc)
   }
 
-def getFreeVar(t: Type, env: ENV): List[TVar] =
+def free_type_var(t: Type, env: ENV): List[TVar] =
   t match
     case n: N => List()
     case tv@TVar(x) =>
-      if (!env.contains(x))
-      then tv :: List()
-      else List()
-    case Arrow(tl, tr) => getFreeVar(tl, env)
-    case TLst(t) => getFreeVar(t, env)
+      if env.contains(x)
+      then List()
+      else tv :: List()
+    case Arrow(tl, tr) => free_type_var(tl, env) ::: free_type_var(tr, env)
+    case TLst(t) => free_type_var(t, env)
+    case Forall(a, b) => free_type_var(b, env).filter(p => !p.equals(a))
 
 
