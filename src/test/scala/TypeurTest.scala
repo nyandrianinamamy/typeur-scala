@@ -210,7 +210,7 @@ class TypeurTest:
     val fix = Fix(`lambda f`, Nat(1))
 
     val env: ENV = Map()
-    println(infer(fix))
+    assertEquals("N", infer(fix).toString)
 
 
   @Test def `unit : Unit`: Unit =
