@@ -37,7 +37,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       generate_equation(t1, N(), env) ::: generate_equation(t2, N(), env) ::: Eq(t0, N()) :: List()
 
     case lst: EOL =>
-      List()
+      Eq(t0, EmptyLst()) :: List()
 
     case cons@Cons(term: Term, lst: Lst) =>
       val x = Var.fresh_var()
@@ -98,7 +98,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
       val eq1 = generate_equation(m, tf, env)
       val eq2 = generate_equation(phi, `tf -> tf`, env)
-      val eq3 = List(Eq(t0, tf))
+      val eq3 = List(Eq(Arrow(t0, t0), `tf -> tf`))
 
       eq2 ::: eq1 ::: eq3
 

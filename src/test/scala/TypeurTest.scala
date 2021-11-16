@@ -59,14 +59,15 @@ class TypeurTest:
 
     assertEquals("N", infer(`let f`, env).toString)
 
-  @Test def `Head [Nil]: Not typable`: Unit =
+  /**
+   * A constant debate, whether or not Head [Nil] should be typable or not
+   * Here it is of type [Nil] because we also need EmptyList to be typable
+   * in the case of If [Nil] Then Else
+   */
+  @Test def `Head [Nil]: [Nil]`: Unit =
     val head = Head(EOL())
 
-    try {
-      infer(head)
-    } catch {
-      case e: Error => assertEquals("Empty list not typable", e.getMessage())
-    }
+    assertEquals("[Nil]", infer(head).toString)
 
   @Test def `Head [1, Nil]: N`: Unit =
     val lst = Cons(Nat(1), EOL())
@@ -81,16 +82,10 @@ class TypeurTest:
 
     assertEquals("[N]", infer(tail).toString)
 
-  @Test def `Nil: Not typable`: Unit =
+  @Test def `[]: [Nil]`: Unit =
     val lst = EOL()
 
-    try {
-      infer(lst)
-      fail(s"$lst should not be typable")
-    } catch {
-      case e: Error => assertEquals("Non typable", e.getMessage())
-    }
-
+    assertEquals("[Nil]", infer(lst).toString)
 
   @Test def `[1, Nil]: [N]`: Unit =
     val lst = Cons(Nat(1), EOL())
@@ -140,7 +135,7 @@ class TypeurTest:
       case e: Error => assertEquals("Non typable", e.getMessage())
     }
 
-  @Test def `if Nil then 1 else 2: N`: Unit =
+  @Test def `if [Nil] then 1 else 2: N`: Unit =
     val cond = Iete(EOL(), Nat(1), Nat(2))
 
     assertEquals("N", infer(cond).toString)
@@ -177,20 +172,6 @@ class TypeurTest:
 
     val env: ENV = Map(f -> `F -> F`)
     assertEquals("N", infer(fix, env).toString)
-
-  @Test def `fix (g: G, 1: N): Non typable`: Unit =
-    val g = Var("g")
-    val G = TVar(g)
-    val fix = Fix(g, Nat(1))
-
-    val env: ENV = Map(g -> G)
-
-    try {
-      infer(fix, env)
-      fail(s"$fix should not be typable")
-    } catch {
-      case e: Error => assertEquals("Non typable", e.getMessage())
-    }
 
   @Test def `fix (lambda x.x, t: T): T`: Unit =
     val x = Var("x")

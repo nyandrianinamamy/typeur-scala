@@ -14,6 +14,7 @@ def occur_check(x: Var, t: Type): Boolean =
     case TLst(t) => occur_check(x, t)
     case TRef(r) => occur_check(x, r)
     case TVoid() => false
+    case EmptyLst() => false
 
 /**
  * Substitute type t with type s for all occurrences of var x in type t
@@ -82,6 +83,10 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(TLst(l), TLst(r)) =>
         unification_etape(Eq(l, r) :: t)
 
+      // [T] = [Nil], T = [Nil]
+      case Eq(TLst(l), EmptyLst()) =>
+        unification_etape(Eq(l, EmptyLst()) :: t)
+
       // Ref a = Ref b, a = b
       case Eq(TRef(a), TRef(b)) =>
         unification_etape(Eq(a, b) :: t)
@@ -115,6 +120,5 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       // Arrow on right but not on left, throw
       case Eq(l, ar@Arrow(arg, res)) =>
         throw new Error(s"${ar.toString} not unifiable with ${l.toString}")
-
 
       case _ => throw new Error(s"Case ${h.toString} non unifiable")

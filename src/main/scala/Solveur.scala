@@ -11,6 +11,7 @@ object Solveur {
             env get ltype match {
               case Some(x) if !x.equals(rtype) =>
                 throw new Error(s"${TVar.t0} has conflicting types ${x} and ${rtype}")
+                
 
               case Some(x) =>
                 solve(t, env)
