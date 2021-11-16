@@ -209,7 +209,6 @@ class TypeurTest:
 
     val fix = Fix(factorial, Nat(1))
 
-    val env: ENV = Map()
     assertEquals("N", infer(fix).toString)
 
 
