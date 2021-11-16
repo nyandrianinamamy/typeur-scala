@@ -205,9 +205,9 @@ class TypeurTest:
     val `n + (f n+1)` = Add(n, `f n+1`)
     val cond = Izte(Nat(0), Nat(1), `n + (f n+1)`)
     val `lambda n. cond` = Abs(n, cond)
-    val `lambda f` = Abs(f, `lambda n. cond`)
+    val factorial = Abs(f, `lambda n. cond`)
 
-    val fix = Fix(`lambda f`, Nat(1))
+    val fix = Fix(factorial, Nat(1))
 
     val env: ENV = Map()
     assertEquals("N", infer(fix).toString)
