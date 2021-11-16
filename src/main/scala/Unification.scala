@@ -62,50 +62,59 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
 
     case h :: t => h match
 
-      // Removes an eq if ltype = rtype
+      // Equation with goal, skip
+      case Eq(TVar(x), r) if x.equals(Var.`0`) =>
+        h :: unification_etape(t)
+
+      // t1 = t2, skip
       case Eq(l, r) if l equals r =>
         unification_etape(t)
 
-      // Remove a -> b = c -> d and replace with a = c and b = d
+      // v1 = v2, substitute v1 with v2
+      case Eq(TVar(x), TVar(y)) =>
+        unification_etape(substitue_partout(x, TVar(y), t))
+
+      // a -> b = c -> d, create a = c and b = d
       case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
         unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
 
+      // [T] = [X], T = X
       case Eq(TLst(l), TLst(r)) =>
         unification_etape(Eq(l, r) :: t)
 
+      // Ref a = Ref b, a = b
       case Eq(TRef(a), TRef(b)) =>
         unification_etape(Eq(a, b) :: t)
 
-      // Open right forall, barendregt type
+      // t = VX.T, t = barendregt(VX,T)
       case Eq(l, Forall(a, b)) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
         unification_etape(Eq(l, alpha_converted) :: t)
 
-      // Open left forall, barendregt type
+      // VX.T = t, barendregt(VX,T) = t
       case Eq(Forall(a, b), r) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
         unification_etape(Eq(alpha_converted, r) :: t)
 
-      // Remove X = Td and eqs[X/Td] if X not in Td
+      // var x = t, and x not in t, substitute all var in t with x
       case eq@Eq(TVar(x), r) =>
         if r contains x
         then throw new Error(s"${eq.toString} non unifiable, $r contains $x")
+        unification_etape(substitue_partout(x, r, t))
 
-        x match
-          case Var.`0` => h :: unification_etape(t)
-          case a: Var => unification_etape(substitue_partout(a, r, t))
-
-
-      // Remove Td = X and eqs[X/Td] if X not in Td
-      case Eq(l, TVar(x)) =>
+      // t = var x, and x not in t, substitute all var in t with x
+      case eq@Eq(l, TVar(x)) =>
         if l contains x
         then throw new Error(s"${eq.toString} non unifiable, $l contains $x")
         unification_etape(substitue_partout(x, l, t))
 
+      // Arrow on left but not on right, throw
       case Eq(ar@Arrow(arg, res), r) =>
         throw new Error(s"${ar.toString} not unifiable with ${r.toString}")
 
+      // Arrow on right but not on left, throw
       case Eq(l, ar@Arrow(arg, res)) =>
         throw new Error(s"${ar.toString} not unifiable with ${l.toString}")
+
 
       case _ => throw new Error(s"Case ${h.toString} non unifiable")

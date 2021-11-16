@@ -23,6 +23,7 @@ class TypeurTest:
 
     try
       infer(term)
+      fail(s"$term should not be typable")
     catch
       case e: Error => assertEquals("Non typable", e.getMessage())
 
@@ -85,6 +86,7 @@ class TypeurTest:
 
     try {
       infer(lst)
+      fail(s"$lst should not be typable")
     } catch {
       case e: Error => assertEquals("Non typable", e.getMessage())
     }
@@ -133,6 +135,7 @@ class TypeurTest:
 
     try {
       infer(cond, env)
+      fail(s"$cond should not be typable")
     } catch {
       case e: Error => assertEquals("Non typable", e.getMessage())
     }
@@ -184,6 +187,7 @@ class TypeurTest:
 
     try {
       infer(fix, env)
+      fail(s"$fix should not be typable")
     } catch {
       case e: Error => assertEquals("Non typable", e.getMessage())
     }
