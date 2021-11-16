@@ -87,17 +87,18 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val `[X]` = TLst(X)
       val `Forall X.[X]` = Forall(X, `[X]`)
 
-      val eq1 = generate_equation(lst, `[X]`, env + (x -> `Forall X.[X]`))
+      val eq1 = generate_equation(lst, `Forall X.[X]`, env)
       val eq2 = generate_equation(term1, t0, env)
       val eq3 = generate_equation(term2, t0, env)
       eq1 ::: eq2 ::: eq3 ::: List()
 
     case Fix(phi, m) =>
-      val tf = TVar(Var.fresh_var())
+      val x = Var.fresh_var()
+      val tf = TVar(x)
       val `tf -> tf` = Arrow(tf, tf)
 
       val eq1 = generate_equation(m, tf, env)
-      val eq2 = generate_equation(phi, `tf -> tf`, env)
+      val eq2 = generate_equation(phi, Forall(tf,`tf -> tf`), env)
       val eq3 = List(Eq(Arrow(t0, t0), `tf -> tf`))
 
       eq2 ::: eq1 ::: eq3
