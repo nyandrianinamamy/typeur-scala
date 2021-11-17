@@ -43,15 +43,6 @@ def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   }
 
 /**
- * Removes the forall surrounding a type expression
- */
-def open_forall(f: Type): Type =
-  f match
-    case Forall(c: TVar, d: Forall) => open_forall(d)
-    case Forall(c: TVar, d: Type) => d
-    case _ => throw new Error("Not type Forall")
-
-/**
  * Simple equation unifier.
  *
  * Suppose t0 is always on the left side.

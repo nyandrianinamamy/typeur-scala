@@ -157,8 +157,14 @@ def free_type_var(t: Type, env: ENV): List[TVar] =
     case tv@TVar(x) =>
       if env.contains(x)
       then List()
-      else tv :: List()
-    case Arrow(tl, tr) => free_type_var(tl, env) ::: free_type_var(tr, env)
+      else
+        tv :: List()
+    case Arrow(tl, tr) =>
+      val in_left = free_type_var(tl, env)
+      val in_right = free_type_var(tr, env)
+      val combined = in_left ::: in_right
+
+      combined.distinct
     case TLst(t) => free_type_var(t, env)
     case Forall(a, b) => free_type_var(b, env).filter(p => !p.equals(a))
 
