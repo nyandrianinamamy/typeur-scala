@@ -46,7 +46,7 @@ class TypeurTest:
 
     infer(term) match
       case Success(infered_type: Type) =>
-        assertEquals("(t3 -> t3)", infered_type.toString)
+        assertEquals("(t2 -> t2)", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
@@ -389,6 +389,21 @@ class TypeurTest:
     infer(term, env) match
       case Success(infered_type: Type) =>
         assertEquals("Unit", infered_type.toString)
+
+      case Failure(exception: Exception) =>
+        fail(exception.getMessage())
+
+
+  @Test def `let x = lambda y.y in x : Vx2.(x2 -> x2)`: Unit =
+    val y = Var("y")
+    val abs = Abs(y, y)
+    val x = Var("x")
+
+    val term = Letin(x, abs, x)
+
+    infer(term) match
+      case Success(infered_type: Type) =>
+        assertEquals("forall x2.(x2 -> x2)", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())

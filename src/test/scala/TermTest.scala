@@ -98,35 +98,10 @@ class TermTest:
 
     var KII = App(App(K, I), I)
 
-    print_term(KII)
-
     KII = alpha_conversion(KII) match
       case App(term1, term2) => App(term1, term2)
       case _ => assert(false)
 
-    print_term(KII)
-
-  @Test def should_print_term(): Unit =
-    val x = Var("x")
-    val abs = Abs(x, x)
-    val app = App(x, x)
-
-    val x_string = print_term(x)
-    val abs_string = print_term(abs)
-    val app_string = print_term(app)
-
-    assertEquals(x.name, x_string)
-    assertEquals(s"(fun ${abs.arg.name} -> ${
-      abs.body match
-        case Var(x) => x
-    })", abs_string)
-    assertEquals(s"(${
-      app.term1 match
-        case Var(x) => x
-    } ${
-      app.term2 match
-        case Var(x) => x
-    })", app_string)
 
   @Test def should_print_nat(): Unit =
     val n = Nat(0)
