@@ -1,5 +1,8 @@
+import EquationExceptions._
+
 import java.util.NoSuchElementException
-import Typeur._
+import scala.util.{Failure, Success, Try}
+import Typeur.*
 
 case class Eq(ltype: Type, rtype: Type):
   override def toString(): String =
@@ -12,16 +15,16 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       Eq(t0, N()) :: List()
 
     case x: Var =>
-      env get x match {
+      env get x match
         case Some(a) => Eq(t0, a) :: List()
         case None =>
-          throw NoSuchElementException(s"Var $x not found in environment")
-      }
+          throw VarNotFoundInEnvException(x)
 
     case Abs(arg, body) =>
       val t1 = TVar(Var.fresh_var())
       val t2 = TVar(Var.fresh_var())
       val `t1->t2` = Arrow(t1, t2)
+
       generate_equation(body, t2, env + (arg -> t1)) ::: Eq(t0, `t1->t2`) :: List()
 
     case App(term1, term2) =>
@@ -71,9 +74,15 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
 
     case Letin(x, e1, e2) =>
       val t1 = infer(e1, env)
-      val newenv = free_type_var(t1, env)
-      val tx = generalise(newenv, t1)
-      generate_equation(e2, t0, env + (x -> tx))
+      t1 match
+        case Success(infered_type: Type) =>
+          val newenv = free_type_var(infered_type, env)
+          val tx = generalise(newenv, infered_type)
+          generate_equation(e2, t0, env + (x -> tx))
+
+        case Failure(exception) =>
+          throw LetInferenceException(x, e1)
+
 
     case Izte(nat, term1, term2) =>
       val eq1 = generate_equation(nat, N(), env)
@@ -98,7 +107,7 @@ def generate_equation(term: Term, t0: Type, env: ENV): List[Eq] =
       val `tf -> tf` = Arrow(tf, tf)
 
       val eq1 = generate_equation(m, tf, env)
-      val eq2 = generate_equation(phi, Forall(tf,`tf -> tf`), env)
+      val eq2 = generate_equation(phi, Forall(tf, `tf -> tf`), env)
       val eq3 = List(Eq(Arrow(t0, t0), `tf -> tf`))
 
       eq2 ::: eq1 ::: eq3

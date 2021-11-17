@@ -1,3 +1,5 @@
+import UnificationExceptions._
+
 /**
  * Checks if a variable x is present in the type t
  *
@@ -93,11 +95,11 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
 
       // Ref on left but not on right, throw
       case eq@Eq(TRef(a), b) =>
-        throw new Error(s"${eq.toString} non unifiable, $b is not a Ref")
+        throw TypeMismatchException(TRef(a), b)
 
       // Ref on right but not on left, throw
       case eq@Eq(a, TRef(b)) =>
-        throw new Error(s"${eq.toString} non unifiable, $a is not a Ref")
+        throw TypeMismatchException(a, TRef(b))
 
       // t = VX.T, t = barendregt(VX,T)
       case Eq(l, Forall(a, b)) =>
@@ -112,21 +114,24 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       // var x = t, and x not in t, substitute all var in t with x
       case eq@Eq(TVar(x), r) =>
         if r contains x
-        then throw new Error(s"${eq.toString} non unifiable, $r contains $x")
+        then throw TypeMismatchException(TVar(x), r)
+
         unification_etape(substitue_partout(x, r, t))
 
       // t = var x, and x not in t, substitute all var in t with x
       case eq@Eq(l, TVar(x)) =>
         if l contains x
-        then throw new Error(s"${eq.toString} non unifiable, $l contains $x")
+        then throw TypeMismatchException(l, TVar(x))
+
         unification_etape(substitue_partout(x, l, t))
 
       // Arrow on left but not on right, throw
       case Eq(ar@Arrow(arg, res), r) =>
-        throw new Error(s"${ar.toString} not unifiable with ${r.toString}")
+        throw TypeMismatchException(ar, r)
 
       // Arrow on right but not on left, throw
       case Eq(l, ar@Arrow(arg, res)) =>
-        throw new Error(s"${ar.toString} not unifiable with ${l.toString}")
+        throw TypeMismatchException(l, ar)
 
-      case _ => throw new Error(s"Case ${h.toString} non unifiable")
+      case _ =>
+        throw UnificationFailedException(h)

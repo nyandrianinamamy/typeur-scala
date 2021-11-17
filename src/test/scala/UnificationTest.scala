@@ -1,3 +1,4 @@
+import UnificationExceptions.TypeMismatchException
 import org.junit.{Before, Test}
 import org.junit.Assert.*
 
@@ -47,7 +48,7 @@ class UnificationTest:
     try {
       val unified = unification_etape(eqs)
     } catch {
-      case e: Error => assertEquals("X = (Y -> X) non unifiable, (Y -> X) contains X", e.getMessage())
+      case e: TypeMismatchException => assertEquals("X is not unifiable with (Y -> X)", e.getMessage())
     }
 
 

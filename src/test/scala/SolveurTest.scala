@@ -23,5 +23,5 @@ class SolveurTest:
     try {
       solve(eqs)
     } catch {
-      case e: Error => assertEquals(s"${TVar.t0} has conflicting types $X and $Y", e.getMessage())
+      case e: Exception => assertEquals(s"${TVar.t0} has conflicting types $X and $Y", e.getMessage())
     }
