@@ -236,6 +236,21 @@ class TypeurTest:
     val env: ENV = Map(x -> tx)
     assertEquals("x", infer(dr, env).toString)
 
+  @Test def `Deref(x): Not typable`: Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+
+    val dr = Deref(x)
+
+    val env: ENV = Map(x -> tx)
+
+    try {
+      infer(dr, env)
+      fail(s"$dr should not be typable")
+    } catch {
+      case e: Error => assertEquals("Non typable", e.getMessage())
+    }
+
   @Test def `x := y : Unit`: Unit =
     val x = Var("x")
     val tx = TVar(x)

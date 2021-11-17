@@ -91,6 +91,14 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
       case Eq(TRef(a), TRef(b)) =>
         unification_etape(Eq(a, b) :: t)
 
+      // Ref on left but not on right, throw
+      case eq@Eq(TRef(a), b) =>
+        throw new Error(s"${eq.toString} non unifiable, $b is not a Ref")
+
+      // Ref on right but not on left, throw
+      case eq@Eq(a, TRef(b)) =>
+        throw new Error(s"${eq.toString} non unifiable, $a is not a Ref")
+
       // t = VX.T, t = barendregt(VX,T)
       case Eq(l, Forall(a, b)) =>
         val alpha_converted = alpha_conversion_type(Forall(a, b))
