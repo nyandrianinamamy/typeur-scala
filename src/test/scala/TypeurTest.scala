@@ -8,7 +8,7 @@ class TypeurTest:
     Var.last = 1
     TVar.last = 1
 
-  @Test def `lambda xyz.(xz)(yz) : ('a -> ('b -> 'c)) -> (('a -> 'b) -> ('a -> 'c))`(): Unit =
+  @Test def `lambda xyz.(xz)(yz) : ('a -> ('b -> 'c)) -> (('a -> 'b) -> ('a -> 'c))`: Unit =
     val x = Var("x")
     val y = Var("y")
     val z = Var("z")
@@ -22,8 +22,7 @@ class TypeurTest:
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
-
-  @Test def `lambda x.xx : Not Typable`(): Unit =
+  @Test def `lambda x.xx : Not Typable`: Unit =
     val x = Var("x")
     val term = Abs(x, App(x, x))
 
@@ -34,7 +33,6 @@ class TypeurTest:
 
       case Failure(exception: Exception) =>
         assertEquals("(x2 -> x3) is not unifiable with x2", exception.getMessage())
-
 
   @Test def `let f = lambda x.x in f f: 'a->'a`: Unit =
     val x = Var("x")
@@ -51,7 +49,7 @@ class TypeurTest:
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
-  @Test def `let f = (lambda x.x) in (f 1): N`(): Unit =
+  @Test def `let f = (lambda x.x) in (f 1): N`: Unit =
     val x = Var("x")
     val f = Var("f")
     val `1` = Nat(1)
@@ -67,7 +65,7 @@ class TypeurTest:
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
-  @Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t): N`(): Unit =
+  @Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t): N`: Unit =
     val x = Var("x")
     val f = Var("f")
     val t = Var("t")
@@ -118,7 +116,6 @@ class TypeurTest:
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
-
 
   @Test def `Tail [1, [2, Nil]]: [N]`: Unit =
     val lst = Cons(Nat(1), Cons(Nat(2), EOL()))
@@ -192,7 +189,6 @@ class TypeurTest:
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
-
   @Test def `if 0 then 1 else 2: N`: Unit =
     val term = Izte(Nat(0), Nat(1), Nat(2))
 
@@ -240,7 +236,6 @@ class TypeurTest:
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
-
   @Test def `if [1, Nil] then Head [2, Nil] else Head [3, Nil]: N`: Unit =
     val lst1 = Cons(Nat(1), EOL())
     val lst2 = Cons(Nat(2), EOL())
@@ -254,7 +249,6 @@ class TypeurTest:
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
-
 
   @Test def `if [1, Nil] then Tail [2, [3, Nil]] else Tail [3, [4, Nil]]: [N]`: Unit =
     val lst1 = Cons(Nat(1), EOL())
@@ -301,7 +295,6 @@ class TypeurTest:
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
-
 
   @Test def `fix (lambda f. lambda n. if 0 then 1 else Add(n, App(f, Add(n, 1)), 1: N): N`: Unit =
     val n = Var("n")
@@ -392,7 +385,6 @@ class TypeurTest:
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
-
 
   @Test def `let x = lambda y.y in x : Vx2.(x2 -> x2)`: Unit =
     val y = Var("y")
