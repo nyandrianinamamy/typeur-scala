@@ -8,7 +8,7 @@ class TypeurTest:
     Var.last = 1
     TVar.last = 1
 
-  @Test def `lambda xyz.(xz)(yz) : '(a -> ('b -> 'c)) -> (('a -> 'b) -> ('a -> 'c))`(): Unit =
+  @Test def `lambda xyz.(xz)(yz) : ('a -> ('b -> 'c)) -> (('a -> 'b) -> ('a -> 'c))`(): Unit =
     val x = Var("x")
     val y = Var("y")
     val z = Var("z")
