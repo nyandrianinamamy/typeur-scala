@@ -2,12 +2,13 @@ import Typeur._
 import scala.language.postfixOps
 
 @main def hello: Unit =
-  val x = Var("x")
-  val y = Var("y")
-  val z = Var("z")
-
-  val term = Abs(x, Abs(y, Abs(z, App(App(x, z), App(y, z)))))
-
-  val t = Abs(y, Abs(z, y));
-
-  println(infer(t))
+  println("++++++++++++++")
+  println("Hello !")
+  println("You can write expressions in the Main file if you want to try out the type inference system.")
+  println("However, if you just want to see how everything is supposed to be done")
+  println("I invite you to see and run the Typeur.test file which demonstrates all of the type system capabilities")
+  println("++++++++++++++")
+  println("$ sbt")
+  println("> testOnly TypeurTest")
+  println("++++++++++++++")
+  println("Have a nice day")
