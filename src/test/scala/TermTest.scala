@@ -111,7 +111,7 @@ class TermTest:
   @Test def should_print_lst(): Unit =
     val l = Cons(Nat(0), Cons(Nat(1), EOL()))
 
-    assertEquals(s"(0,(1,Nil))", l.toString)
+    assertEquals("[0,[1,Nil]]", l.toString)
 
   @Test def should_print_let_poly(): Unit =
     val x = Var("x")

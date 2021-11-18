@@ -46,7 +46,7 @@ case class EOL() extends Lst :
  */
 case class Cons(t: Term, list: Lst) extends Lst :
   override def toString: String = this match
-    case Cons(t, l) => s"(${t.toString},${l.toString})"
+    case Cons(t, l) => s"[${t.toString},${l.toString}]"
 
 /**
  * let x = t1 in t2

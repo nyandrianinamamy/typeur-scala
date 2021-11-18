@@ -6,7 +6,6 @@ object UnificationExceptions {
   class UnificationFailedException(eq: Eq) extends RuntimeException {
     override def getMessage: String = eq match
       case eq@Eq(a: Type, b: Type) => s"Unification failed for $eq"
-      case _ => "Unification failed"
   }
 }
 

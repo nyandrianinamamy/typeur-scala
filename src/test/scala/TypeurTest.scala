@@ -8,6 +8,8 @@ class TypeurTest:
     Var.last = 1
     TVar.last = 1
 
+    println("=============================================")
+
   @Test def `lambda xyz.(xz)(yz) : ('a -> ('b -> 'c)) -> (('a -> 'b) -> ('a -> 'c))`: Unit =
     val x = Var("x")
     val y = Var("y")
@@ -15,24 +17,34 @@ class TypeurTest:
 
     val term = Abs(x, Abs(y, Abs(z, App(App(x, z), App(y, z)))))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("((x6 -> (x8 -> x7)) -> ((x6 -> x8) -> (x6 -> x7)))", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `lambda x.xx : Not Typable`: Unit =
     val x = Var("x")
     val term = Abs(x, App(x, x))
 
 
+    println(s"Term: $term")
     infer(term) match
-      case Success(value) =>
+      case Success(infered_type: Type) =>
         fail(s"$term should not be typable")
 
       case Failure(exception: Exception) =>
+        println(s"Infered type: Not typable")
         assertEquals("(x2 -> x3) is not unifiable with x2", exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `let f = lambda x.x in f f: 'a->'a`: Unit =
     val x = Var("x")
@@ -42,12 +54,17 @@ class TypeurTest:
 
     val term = Letin(f, abs, app)
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("(t2 -> t2)", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `let f = (lambda x.x) in (f 1): N`: Unit =
     val x = Var("x")
@@ -58,12 +75,17 @@ class TypeurTest:
 
     val term = Letin(f, abs, app)
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t): N`: Unit =
     val x = Var("x")
@@ -84,12 +106,17 @@ class TypeurTest:
 
     val env: ENV = Map(t -> T)
 
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   /**
    * A constant debate, whether or not Head [Nil] should be typable or not
@@ -99,105 +126,155 @@ class TypeurTest:
   @Test def `Head [Nil]: [Nil]`: Unit =
     val term = Head(EOL())
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("[Nil]", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `Head [1, Nil]: N`: Unit =
     val lst = Cons(Nat(1), EOL())
     val term = Head(lst)
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `Tail [1, [2, Nil]]: [N]`: Unit =
     val lst = Cons(Nat(1), Cons(Nat(2), EOL()))
     val term = Tail(lst)
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("[N]", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
+      case Failure(_) =>
+        fail()
+
   @Test def `[]: [Nil]`: Unit =
     val term = EOL()
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("[Nil]", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
+      case Failure(_) =>
+        fail()
+
   @Test def `[1, Nil]: [N]`: Unit =
     val term = Cons(Nat(1), EOL())
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("[N]", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `[1, 2, Nil]: [N]`: Unit =
     val term = Cons(Nat(1), Cons(Nat(2), EOL()))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("[N]", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `[lambda x.x, lambda x.x, Nil]: [(x4 -> x4)]`: Unit =
     val abs = Abs(Var("x"), Var("x"))
     val term = Cons(abs, Cons(abs, EOL()))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("[(x3 -> x3)]", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
+      case Failure(_) =>
+        fail()
+
   @Test def `1 + 1: N`: Unit =
     val term = Add(Nat(1), Nat(1))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `1 - 1: N`: Unit =
     val term = Diff(Nat(1), Nat(1))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `if 0 then 1 else 2: N`: Unit =
     val term = Izte(Nat(0), Nat(1), Nat(2))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `if 0 then T else X: Non Typable`: Unit =
     val x = Var("x")
@@ -208,33 +285,48 @@ class TypeurTest:
 
     val env: ENV = Map(t -> T, x -> X)
 
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         fail(s"$term should not be typable")
 
       case Failure(exception: Exception) =>
         assertEquals("x0 has conflicting types t and x", exception.getMessage())
 
+      case Failure(_) =>
+        fail()
+
   @Test def `if [Nil] then 1 else 2: N`: Unit =
     val term = Iete(EOL(), Nat(1), Nat(2))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `if [1, Nil] then 1 else 2: N`: Unit =
     val lst = Cons(Nat(1), EOL())
     val term = Iete(lst, Nat(1), Nat(2))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `if [1, Nil] then Head [2, Nil] else Head [3, Nil]: N`: Unit =
     val lst1 = Cons(Nat(1), EOL())
@@ -243,12 +335,17 @@ class TypeurTest:
 
     val term = Iete(lst1, Head(lst2), Head(lst3))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `if [1, Nil] then Tail [2, [3, Nil]] else Tail [3, [4, Nil]]: [N]`: Unit =
     val lst1 = Cons(Nat(1), EOL())
@@ -257,12 +354,17 @@ class TypeurTest:
 
     val term = Iete(lst1, Tail(lst2), Tail(lst3))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("[N]", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `fix (f: F -> F, 1: N): N`: Unit =
     val f = Var("f")
@@ -271,12 +373,18 @@ class TypeurTest:
     val term = Fix(f, Nat(1))
 
     val env: ENV = Map(f -> `F -> F`)
+
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `fix (lambda x.x, t: T): T`: Unit =
     val x = Var("x")
@@ -289,12 +397,17 @@ class TypeurTest:
 
     val env: ENV = Map(t -> T)
 
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("T", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `fix (lambda f. lambda n. if 0 then 1 else Add(n, App(f, Add(n, 1)), 1: N): N`: Unit =
     val n = Var("n")
@@ -308,22 +421,32 @@ class TypeurTest:
 
     val term = Fix(factorial, Nat(1))
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("N", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
 
+      case Failure(_) =>
+        fail()
+
   @Test def `unit : Unit`: Unit =
     val term = Void()
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("Unit", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `Ref x: Ref x`: Unit =
     val x = Var("x")
@@ -332,12 +455,18 @@ class TypeurTest:
     val term = Ref(x)
 
     val env: ENV = Map(x -> tx)
+
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("Ref x", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `Deref(Ref x): x`: Unit =
     val x = Var("x")
@@ -347,12 +476,17 @@ class TypeurTest:
     val term = Deref(ref)
 
     val env: ENV = Map(x -> tx)
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("x", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `Deref(x): Not typable`: Unit =
     val x = Var("x")
@@ -362,12 +496,16 @@ class TypeurTest:
 
     val env: ENV = Map(x -> tx)
 
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
         fail(s"$term should not be typable")
 
       case Failure(exception: Exception) =>
         assertEquals("Ref x2 is not unifiable with x", exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `x := y : Unit`: Unit =
     val x = Var("x")
@@ -379,12 +517,17 @@ class TypeurTest:
     val term = Assign(ref, y)
 
     val env: ENV = Map(x -> tx, y -> ty)
+    println(s"Term: $term")
     infer(term, env) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("Unit", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
 
   @Test def `let x = lambda y.y in x : Vx2.(x2 -> x2)`: Unit =
     val y = Var("y")
@@ -393,9 +536,14 @@ class TypeurTest:
 
     val term = Letin(x, abs, x)
 
+    println(s"Term: $term")
     infer(term) match
       case Success(infered_type: Type) =>
+        println(s"Infered type: $infered_type")
         assertEquals("forall x2.(x2 -> x2)", infered_type.toString)
 
       case Failure(exception: Exception) =>
         fail(exception.getMessage())
+
+      case Failure(_) =>
+        fail()
