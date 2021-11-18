@@ -44,3 +44,7 @@ You can compile code with `sbt compile`
 You can run all tests with `sbt test`
 
 You can run the app with `sbt run`
+
+### Author
+
+Mamy Razafintsialonina
