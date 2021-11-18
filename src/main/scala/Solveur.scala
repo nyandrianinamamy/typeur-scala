@@ -1,22 +1,22 @@
+import SolveurExceptions._
+
 object Solveur {
   def solve(eqs: List[Eq], env: Map[Type, Type] = Map()): Type =
-    eqs match {
+    eqs match
       case Nil =>
         env get (TVar.t0) getOrElse {
-          throw new Error(s"${TVar.t0} not found")
+          throw GoalNotFoundException()
         }
       case h :: t =>
-        h match {
+        h match
           case Eq(ltype, rtype) =>
-            env get ltype match {
+            env get ltype match
               case Some(x) if !x.equals(rtype) =>
-                throw new Error(s"${TVar.t0} has conflicting types ${x} and ${rtype}")
+                throw ClashTypeException(TVar.t0, x, rtype)
 
               case Some(x) =>
                 solve(t, env)
+
               case None =>
                 solve(t, env + (ltype -> rtype))
-            }
-        }
-    }
 }

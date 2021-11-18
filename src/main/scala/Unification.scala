@@ -1,3 +1,5 @@
+import UnificationExceptions._
+
 /**
  * Checks if a variable x is present in the type t
  *
@@ -13,6 +15,8 @@ def occur_check(x: Var, t: Type): Boolean =
     case n: N => false
     case TLst(t) => occur_check(x, t)
     case TRef(r) => occur_check(x, r)
+    case TVoid() => false
+    case EmptyLst() => false
 
 /**
  * Substitute type t with type s for all occurrences of var x in type t
@@ -29,7 +33,7 @@ def substitue(x: Var, s: Type, t: Type): Type =
     case TVar(y) if y.equals(x) => s
     case TVar(y) if !(y.equals(x)) => TVar(y)
     case Arrow(arg, res) => Arrow(substitue(x, s, arg), substitue(x, s, res))
-    case Forall(a, b) => t
+    case Forall(l, r) => Forall(l, substitue(x, s, r))
     case TRef(y) => TRef(substitue(x, s, y))
     case TVoid() => t
 
@@ -37,15 +41,6 @@ def substitue_partout(x: Var, s: Type, eqs: List[Eq]): List[Eq] =
   eqs map {
     case Eq(ltype, rtype) => Eq(substitue(x, s, ltype), substitue(x, s, rtype))
   }
-
-/**
- * Removes the forall surrounding a type expression
- */
-def open_forall(f: Type): Type =
-  f match
-    case Forall(c: TVar, d: Forall) => open_forall(d)
-    case Forall(c: TVar, d: Type) => d
-    case _ => throw new Error("Not type Forall")
 
 /**
  * Simple equation unifier.
@@ -59,41 +54,75 @@ def unification_etape(eqs: List[Eq]): List[Eq] =
 
     case Nil => eqs
 
-    case h :: t => h match // extract to independent function
+    case h :: t => h match
 
-      // Removes an eq if ltype = rtype
+      // Equation with goal, skip
+      case Eq(TVar(x), r) if x.equals(Var.`0`) =>
+        h :: unification_etape(t)
+
+      // t1 = t2, skip
       case Eq(l, r) if l equals r =>
         unification_etape(t)
 
-      // Open right forall, barendregt type
-      case Eq(l, Forall(a, b)) =>
-        val alpha_converted = alpha_conversion_type(Forall(a, b))
-        unification_etape(Eq(l, open_forall(alpha_converted)) :: t)
+      // v1 = v2, substitute v1 with v2
+      case Eq(TVar(x), TVar(y)) =>
+        unification_etape(substitue_partout(x, TVar(y), t))
 
-      // Open left forall, barendregt type
-      case Eq(Forall(a, b), r) =>
-        val alpha_converted = alpha_conversion_type(Forall(a, b))
-        unification_etape(Eq(open_forall(alpha_converted), r) :: t)
-
-      case Eq(tv: TVar, r) if tv.equals(TVar.t0) =>
-        h :: unification_etape(t)
-
-      // Remove X = Td and eqs[X/Td] if X not in Td
-      case Eq(TVar(x), r) if !(r contains x) =>
-        unification_etape(substitue_partout(x, r, t))
-
-      // Remove Td = X and eqs[X/Td] if X not in Td
-      case Eq(l, TVar(x)) if !(l contains x) =>
-        unification_etape(substitue_partout(x, l, t))
-
-      // Remove a -> b = c -> d and replace with a = c and b = d
+      // a -> b = c -> d, create a = c and b = d
       case Eq(Arrow(arg, res), Arrow(arg1, res1)) =>
         unification_etape(Eq(arg, arg1) :: Eq(res, res1) :: t)
 
+      // [T] = [X], T = X
       case Eq(TLst(l), TLst(r)) =>
         unification_etape(Eq(l, r) :: t)
 
+      // [T] = [Nil], T = [Nil]
+      case Eq(TLst(l), EmptyLst()) =>
+        unification_etape(Eq(l, EmptyLst()) :: t)
+
+      // Ref a = Ref b, a = b
       case Eq(TRef(a), TRef(b)) =>
         unification_etape(Eq(a, b) :: t)
 
-      case _ => throw new Error("Unification failed")
+      // Ref on left but not on right, throw
+      case eq@Eq(TRef(a), b) =>
+        throw TypeMismatchException(TRef(a), b)
+
+      // Ref on right but not on left, throw
+      case eq@Eq(a, TRef(b)) =>
+        throw TypeMismatchException(a, TRef(b))
+
+      // t = VX.T, t = barendregt(VX,T)
+      case Eq(l, Forall(a, b)) =>
+        val alpha_converted = alpha_conversion_type(Forall(a, b))
+        unification_etape(Eq(l, alpha_converted) :: t)
+
+      // VX.T = t, barendregt(VX,T) = t
+      case Eq(Forall(a, b), r) =>
+        val alpha_converted = alpha_conversion_type(Forall(a, b))
+        unification_etape(Eq(alpha_converted, r) :: t)
+
+      // var x = t, and x not in t, substitute all var in t with x
+      case eq@Eq(TVar(x), r) =>
+        if r contains x
+        then throw TypeMismatchException(TVar(x), r)
+
+        unification_etape(substitue_partout(x, r, t))
+
+      // t = var x, and x not in t, substitute all var in t with x
+      case eq@Eq(l, TVar(x)) =>
+        if l contains x
+        then throw TypeMismatchException(l, TVar(x))
+
+        unification_etape(substitue_partout(x, l, t))
+
+      // Arrow on left but not on right, throw
+      case Eq(ar@Arrow(arg, res), r) =>
+        throw TypeMismatchException(ar, r)
+
+      // Arrow on right but not on left, throw
+      case Eq(l, ar@Arrow(arg, res)) =>
+        throw TypeMismatchException(l, ar)
+
+      case _ =>
+        throw UnificationFailedException(h)

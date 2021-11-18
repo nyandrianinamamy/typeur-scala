@@ -28,6 +28,9 @@ case class TLst(T: Type) extends Type :
   override def toString: String =
     s"[${T.toString}]"
 
+case class EmptyLst() extends Type :
+  override def toString: String = "[Nil]"
+
 /**
  * Type constructor forall X.T
  */
@@ -62,26 +65,21 @@ object TVar {
 def sequal_type(ltype: Type, rtype: Type): Boolean =
   ltype.equals(rtype)
 
-def alpha_conversion_type(t: Type): Type =
+def alpha_conversion_type(f: Forall, remp: Map[TVar, TVar] = Map()): Type =
   def barendregt(t: Type, remp: Map[TVar, TVar]): Type = t match
+    case N() => N()
+
     case TVar(x) =>
       remp get TVar(x) getOrElse TVar(x)
 
     case TLst(x) =>
       TLst(barendregt(x, remp))
 
-    case Arrow(arg: TVar, res) =>
-      var new_tvar: TVar = remp get arg getOrElse TVar.fresh_tvar()
-      Arrow(new_tvar, barendregt(res, remp + (arg -> new_tvar)))
+    case Arrow(arg, res) =>
+      Arrow(barendregt(arg, remp), barendregt(res, remp))
 
-    case Arrow(arg, res: TVar) =>
-      var new_tvar: TVar = remp get res getOrElse TVar.fresh_tvar()
-      Arrow(barendregt(arg, remp + (res -> new_tvar)), new_tvar)
-
-    case Forall(a, f) =>
-      var new_tvar = remp get a getOrElse TVar.fresh_tvar()
-      Forall(new_tvar, barendregt(f, remp + (a -> new_tvar)))
-
-    case _ => throw Error("Barendregt failed")
-
-  barendregt(t, Map())
+  f match {
+    case Forall(a: TVar, b: Forall) =>
+      alpha_conversion_type(b, Map(a -> TVar.fresh_tvar()))
+    case Forall(a: TVar, b) => barendregt(b, Map(a -> TVar.fresh_tvar()))
+  }

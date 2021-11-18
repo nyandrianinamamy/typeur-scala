@@ -1,8 +1,13 @@
-import org.junit.Test
+import UnificationExceptions.TypeMismatchException
+import org.junit.{Before, Test}
 import org.junit.Assert.*
 
 
 class UnificationTest:
+  @Before def initialize(): Unit =
+    Var.last = 1
+    TVar.last = 1
+
   @Test def should_skip_t0: Unit =
     val X = TVar(Var("X"))
     val Y = TVar(Var("Y"))
@@ -27,7 +32,7 @@ class UnificationTest:
     val Z = TVar(Var("Z"))
     val A = TVar(Var("A"))
     val `X -> X` = Arrow(X, X)
-    val eqs = Eq(X, Y) :: Eq(Z, `X -> X`) :: Eq(`X -> X`, A) :: List()
+    val eqs = Eq(X, Y) :: Eq(`X -> X`, `X -> X`) :: List()
 
     val unified = unification_etape(eqs)
 
@@ -43,7 +48,7 @@ class UnificationTest:
     try {
       val unified = unification_etape(eqs)
     } catch {
-      case e: Error => assertEquals("Unification failed", e.getMessage())
+      case e: TypeMismatchException => assertEquals("X is not unifiable with (Y -> X)", e.getMessage())
     }
 
 
@@ -68,7 +73,7 @@ class UnificationTest:
     val s = TVar(Var("s"))
     val forall = Forall(TVar(X), TVar(X))
 
-    val eqs: List[Eq] = Eq(forall, s) ::  Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
+    val eqs: List[Eq] = Eq(forall, s) :: Eq(t, forall) :: Eq(TVar.t0, tx) :: Nil;
 
     assertEquals("List(x0 = X)", unification_etape(eqs).toString)
 

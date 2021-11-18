@@ -5,6 +5,7 @@ import Solveur.solve
 class SolveurTest:
   @Before def initialize(): Unit =
     Var.last = 1
+    TVar.last = 1
 
   @Test def should_return_solution(): Unit =
     val X = TVar(Var("X"))
@@ -22,5 +23,5 @@ class SolveurTest:
     try {
       solve(eqs)
     } catch {
-      case e: Error => assertEquals(s"${TVar.t0} has conflicting types $X and $Y", e.getMessage())
+      case e: Exception => assertEquals(s"${TVar.t0} has conflicting types $X and $Y", e.getMessage())
     }
