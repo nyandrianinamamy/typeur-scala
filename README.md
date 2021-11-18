@@ -15,11 +15,11 @@ Type := TVar | Arrow | N | TLst | EmptyLst | Forall | Tref | TVoid
 
 ```scala
 ...
-@Test def `Ref x: Ref x`: Unit =
+@Test def `Ref x: Ref x`
   
-@Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t): N`: Unit =
+@Test def `let f = (lambda x.x) in let g = (lambda xy.x) in g (f 1) (f t): N`
   
-@Test def `lambda xyz.(xz)(yz) : ('a -> ('b -> 'c)) -> (('a -> 'b) -> ('a -> 'c))`(): Unit =
+@Test def `lambda xyz.(xz)(yz) : ('a -> ('b -> 'c)) -> (('a -> 'b) -> ('a -> 'c))`
 ...
 ```
 
@@ -32,6 +32,12 @@ Scala 3
 sbt 1.x
 
 Install `sbt` [https://www.scala-sbt.org/1.x/docs/Setup.html](https://www.scala-sbt.org/1.x/docs/Setup.html)
+
+Clone the project 
+```bash
+git clone https://github.com/nyandrianinamamy/typeur-scala.git
+cd typeur-scala
+```
 
 You can compile code with `sbt compile`
 
