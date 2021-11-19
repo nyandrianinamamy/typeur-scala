@@ -217,7 +217,7 @@ class TypeurTest:
 
     assertPass("Ref x", term, env)
 
-  @Test def `Deref(Ref x): x`: Unit =
+  @Test def `!(x: ref x): x`: Unit =
     val x = Var("x")
     val tx = TVar(x)
 
@@ -228,7 +228,13 @@ class TypeurTest:
 
     assertPass("x", term, env)
 
-  @Test def `Deref(x): Not typable`: Unit =
+  @Test def `!(n: ref Nat): Nat`: Unit =
+    val ref = Ref(Nat(5))
+    val term = Deref(ref)
+
+    assertPass("N", term)
+
+  @Test def `!(x: x): Not typable`: Unit =
     val x = Var("x")
     val tx = TVar(x)
 
@@ -248,6 +254,19 @@ class TypeurTest:
     val term = Assign(ref, y)
 
     val env: ENV = Map(x -> tx, y -> ty)
+
+    assertPass("Unit", term, env)
+
+  @Test def `Ref x := 5 : Unit`: Unit =
+    val x = Var("x")
+    val tx = TVar(x)
+    val y = Var("y")
+    val ty = TVar(y)
+
+    val ref = Ref(x)
+    val term = Assign(ref, Nat(5))
+
+    val env: ENV = Map(x -> tx)
 
     assertPass("Unit", term, env)
 

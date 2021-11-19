@@ -56,7 +56,7 @@ case class Deref(e: Term) extends Term :
  */
 case class Assign(e1: Term, e2: Term) extends Term :
   override def toString: String =
-    s"!${e1.toString} := ${e1.toString}"
+    s"!${e1.toString} := ${e2.toString}"
 
 /**
  * Referencing
