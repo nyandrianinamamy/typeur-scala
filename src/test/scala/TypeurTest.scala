@@ -207,7 +207,7 @@ class TypeurTest:
 
     assertPass("Unit", term)
 
-  @Test def `Ref x: Ref x`: Unit =
+  @Test def `Ref x: ref x`: Unit =
     val x = Var("x")
     val tx = TVar(x)
 
