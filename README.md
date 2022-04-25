@@ -1,6 +1,6 @@
-## Type Inference System
+## Type Inference System for the course "Typage et Analyse Statique" at Sorbonne Université
 
-Simply typed lambda-calculus with let-polymorphism and imperative traits.
+This project aims to implement a type inference system based on simply typed lambda-calculus with let-polymorphism and imperative traits.
 
 ### Implemented terms and types
 
@@ -27,11 +27,9 @@ You can run it by launching `sbt`, then `testOnly TypeurTest`.
 
 ### Installation
 #### Requirements
-Java 14+  
-Scala 3  
-sbt 1.x
-
-Install `sbt` [https://www.scala-sbt.org/1.x/docs/Setup.html](https://www.scala-sbt.org/1.x/docs/Setup.html)
+* Java 14+  
+* Scala 3  
+* sbt 1.x [https://www.scala-sbt.org/1.x/docs/Setup.html](https://www.scala-sbt.org/1.x/docs/Setup.html)
 
 Clone the project 
 ```bash
@@ -47,4 +45,4 @@ You can run the app with `sbt run`
 
 ### Author
 
-Mamy Razafintsialonina
+* Mamy Razafintsialonina
